@@ -1,4 +1,6 @@
 using TransactionService.API.Extensions;
+using TransactionService.Application.Interfaces;
+using TransactionService.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1662,6 +1662,7 @@
         "framework": ".NETCoreApp,Version=v9.0",
         "dependencies": {
           "AuthService.Domain": "1.0.0",
+          "BCrypt.Net-Next": "4.0.3",
           "SharedLibrary": "1.0.0"
         },
         "compile": {
@@ -4947,39 +4948,46 @@
     ]
   },
   "packageFolders": {
-    "/Users/gullu/.nuget/packages/": {}
+    "C:\\Users\\Admin\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/gullu/Documents/Projects/expense-manag-be/src/AuthService/AuthService.API/AuthService.API.csproj",
+      "projectUniqueName": "D:\\MY Projects\\splitter-be\\src\\AuthService\\AuthService.API\\AuthService.API.csproj",
       "projectName": "AuthService.API",
-      "projectPath": "/Users/gullu/Documents/Projects/expense-manag-be/src/AuthService/AuthService.API/AuthService.API.csproj",
-      "packagesPath": "/Users/gullu/.nuget/packages/",
-      "outputPath": "/Users/gullu/Documents/Projects/expense-manag-be/src/AuthService/AuthService.API/obj/",
+      "projectPath": "D:\\MY Projects\\splitter-be\\src\\AuthService\\AuthService.API\\AuthService.API.csproj",
+      "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
+      "outputPath": "D:\\MY Projects\\splitter-be\\src\\AuthService\\AuthService.API\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "/Users/gullu/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
       ],
       "sources": {
-        "/usr/local/share/dotnet/library-packs": {},
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "/Users/gullu/Documents/Projects/expense-manag-be/src/AuthService/AuthService.Application/AuthService.Application.csproj": {
-              "projectPath": "/Users/gullu/Documents/Projects/expense-manag-be/src/AuthService/AuthService.Application/AuthService.Application.csproj"
+            "D:\\MY Projects\\splitter-be\\src\\AuthService\\AuthService.Application\\AuthService.Application.csproj": {
+              "projectPath": "D:\\MY Projects\\splitter-be\\src\\AuthService\\AuthService.Application\\AuthService.Application.csproj"
             },
-            "/Users/gullu/Documents/Projects/expense-manag-be/src/AuthService/AuthService.Infrastructure/AuthService.Infrastructure.csproj": {
-              "projectPath": "/Users/gullu/Documents/Projects/expense-manag-be/src/AuthService/AuthService.Infrastructure/AuthService.Infrastructure.csproj"
+            "D:\\MY Projects\\splitter-be\\src\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj": {
+              "projectPath": "D:\\MY Projects\\splitter-be\\src\\AuthService\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj"
             },
-            "/Users/gullu/Documents/Projects/expense-manag-be/src/SharedLibrary/SharedLibrary.csproj": {
-              "projectPath": "/Users/gullu/Documents/Projects/expense-manag-be/src/SharedLibrary/SharedLibrary.csproj"
+            "D:\\MY Projects\\splitter-be\\src\\SharedLibrary\\SharedLibrary.csproj": {
+              "projectPath": "D:\\MY Projects\\splitter-be\\src\\SharedLibrary\\SharedLibrary.csproj"
             }
           }
         }
@@ -5042,7 +5050,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.101/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

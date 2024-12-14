@@ -1,4 +1,6 @@
+using ExpenseService.Application.Interfaces;
 using ExpenseService.Domain.Entities;
+using ExpenseService.Infrastructure.Persistence;
 using SharedLibrary.Repositories;
 
 namespace ExpenseService.Infrastructure.Repositories;

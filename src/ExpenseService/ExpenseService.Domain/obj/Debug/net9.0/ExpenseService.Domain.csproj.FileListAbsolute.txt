@@ -9,3 +9,15 @@
 /Users/gullu/Documents/Projects/expense-manag-be/src/ExpenseService/ExpenseService.Domain/obj/Debug/net9.0/refint/ExpenseService.Domain.dll
 /Users/gullu/Documents/Projects/expense-manag-be/src/ExpenseService/ExpenseService.Domain/obj/Debug/net9.0/ExpenseService.Domain.pdb
 /Users/gullu/Documents/Projects/expense-manag-be/src/ExpenseService/ExpenseService.Domain/obj/Debug/net9.0/ref/ExpenseService.Domain.dll
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Domain\bin\Debug\net9.0\ExpenseService.Domain.deps.json
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Domain\bin\Debug\net9.0\ExpenseService.Domain.dll
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Domain\bin\Debug\net9.0\ExpenseService.Domain.pdb
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Domain\obj\Debug\net9.0\ExpenseService.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Domain\obj\Debug\net9.0\ExpenseService.Domain.AssemblyInfoInputs.cache
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Domain\obj\Debug\net9.0\ExpenseService.Domain.AssemblyInfo.cs
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Domain\obj\Debug\net9.0\ExpenseService.Domain.csproj.CoreCompileInputs.cache
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Domain\obj\Debug\net9.0\ExpenseService.Domain.sourcelink.json
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Domain\obj\Debug\net9.0\ExpenseService.Domain.dll
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Domain\obj\Debug\net9.0\refint\ExpenseService.Domain.dll
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Domain\obj\Debug\net9.0\ExpenseService.Domain.pdb
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Domain\obj\Debug\net9.0\ref\ExpenseService.Domain.dll

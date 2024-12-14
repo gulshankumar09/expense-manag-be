@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "DUXXfYlSVKc=",
+  "dgSpecHash": "s5K7USJL8SM=",
   "success": true,
-  "projectFilePath": "/Users/gullu/Documents/Projects/expense-manag-be/src/TransactionService/TransactionService.Domain/TransactionService.Domain.csproj",
+  "projectFilePath": "D:\\MY Projects\\splitter-be\\src\\TransactionService\\TransactionService.Domain\\TransactionService.Domain.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

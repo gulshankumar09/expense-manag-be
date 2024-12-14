@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "9UVGrYW9+R4=",
+  "dgSpecHash": "LcL9j4hHVi0=",
   "success": true,
-  "projectFilePath": "/Users/gullu/Documents/Projects/expense-manag-be/src/AuthService/AuthService.Domain/AuthService.Domain.csproj",
+  "projectFilePath": "D:\\MY Projects\\splitter-be\\src\\AuthService\\AuthService.Domain\\AuthService.Domain.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

@@ -19,3 +19,25 @@
 /Users/gullu/Documents/Projects/expense-manag-be/src/ExpenseService/ExpenseService.Infrastructure/obj/Debug/net9.0/ExpenseService.Infrastructure.pdb
 /Users/gullu/Documents/Projects/expense-manag-be/src/ExpenseService/ExpenseService.Infrastructure/obj/Debug/net9.0/ExpenseService.Infrastructure.genruntimeconfig.cache
 /Users/gullu/Documents/Projects/expense-manag-be/src/ExpenseService/ExpenseService.Infrastructure/obj/Debug/net9.0/ref/ExpenseService.Infrastructure.dll
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Infrastructure\obj\Debug\net9.0\ExpenseService.Infrastructure.csproj.AssemblyReference.cache
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Infrastructure\obj\Debug\net9.0\ExpenseService.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Infrastructure\obj\Debug\net9.0\ExpenseService.Infrastructure.AssemblyInfoInputs.cache
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Infrastructure\obj\Debug\net9.0\ExpenseService.Infrastructure.AssemblyInfo.cs
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Infrastructure\obj\Debug\net9.0\ExpenseService.Infrastructure.csproj.CoreCompileInputs.cache
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Infrastructure\obj\Debug\net9.0\ExpenseService.Infrastructure.sourcelink.json
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Infrastructure\obj\Debug\net9.0\ExpenseService.Infrastructure.dll
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Infrastructure\obj\Debug\net9.0\refint\ExpenseService.Infrastructure.dll
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Infrastructure\obj\Debug\net9.0\ExpenseService.Infrastructure.pdb
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Infrastructure\bin\Debug\net9.0\ExpenseService.Infrastructure.deps.json
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Infrastructure\bin\Debug\net9.0\ExpenseService.Infrastructure.runtimeconfig.json
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Infrastructure\bin\Debug\net9.0\ExpenseService.Infrastructure.dll
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Infrastructure\bin\Debug\net9.0\ExpenseService.Infrastructure.pdb
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Infrastructure\bin\Debug\net9.0\ExpenseService.Application.dll
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Infrastructure\bin\Debug\net9.0\ExpenseService.Domain.dll
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Infrastructure\bin\Debug\net9.0\SharedLibrary.dll
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Infrastructure\bin\Debug\net9.0\ExpenseService.Application.pdb
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Infrastructure\bin\Debug\net9.0\ExpenseService.Domain.pdb
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Infrastructure\bin\Debug\net9.0\SharedLibrary.pdb
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Infrastructure\obj\Debug\net9.0\ExpenseS.EF2B2556.Up2Date
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Infrastructure\obj\Debug\net9.0\ExpenseService.Infrastructure.genruntimeconfig.cache
+D:\MY Projects\splitter-be\src\ExpenseService\ExpenseService.Infrastructure\obj\Debug\net9.0\ref\ExpenseService.Infrastructure.dll

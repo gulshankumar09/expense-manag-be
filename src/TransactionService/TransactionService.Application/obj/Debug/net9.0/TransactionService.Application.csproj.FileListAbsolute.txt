@@ -15,3 +15,21 @@
 /Users/gullu/Documents/Projects/expense-manag-be/src/TransactionService/TransactionService.Application/bin/Debug/net9.0/SharedLibrary.pdb
 /Users/gullu/Documents/Projects/expense-manag-be/src/TransactionService/TransactionService.Application/obj/Debug/net9.0/TransactionService.Application.csproj.AssemblyReference.cache
 /Users/gullu/Documents/Projects/expense-manag-be/src/TransactionService/TransactionService.Application/obj/Debug/net9.0/Transact.D1735A21.Up2Date
+D:\MY Projects\splitter-be\src\TransactionService\TransactionService.Application\bin\Debug\net9.0\TransactionService.Application.deps.json
+D:\MY Projects\splitter-be\src\TransactionService\TransactionService.Application\bin\Debug\net9.0\TransactionService.Application.dll
+D:\MY Projects\splitter-be\src\TransactionService\TransactionService.Application\bin\Debug\net9.0\TransactionService.Application.pdb
+D:\MY Projects\splitter-be\src\TransactionService\TransactionService.Application\bin\Debug\net9.0\SharedLibrary.dll
+D:\MY Projects\splitter-be\src\TransactionService\TransactionService.Application\bin\Debug\net9.0\TransactionService.Domain.dll
+D:\MY Projects\splitter-be\src\TransactionService\TransactionService.Application\bin\Debug\net9.0\TransactionService.Domain.pdb
+D:\MY Projects\splitter-be\src\TransactionService\TransactionService.Application\bin\Debug\net9.0\SharedLibrary.pdb
+D:\MY Projects\splitter-be\src\TransactionService\TransactionService.Application\obj\Debug\net9.0\TransactionService.Application.csproj.AssemblyReference.cache
+D:\MY Projects\splitter-be\src\TransactionService\TransactionService.Application\obj\Debug\net9.0\TransactionService.Application.GeneratedMSBuildEditorConfig.editorconfig
+D:\MY Projects\splitter-be\src\TransactionService\TransactionService.Application\obj\Debug\net9.0\TransactionService.Application.AssemblyInfoInputs.cache
+D:\MY Projects\splitter-be\src\TransactionService\TransactionService.Application\obj\Debug\net9.0\TransactionService.Application.AssemblyInfo.cs
+D:\MY Projects\splitter-be\src\TransactionService\TransactionService.Application\obj\Debug\net9.0\TransactionService.Application.csproj.CoreCompileInputs.cache
+D:\MY Projects\splitter-be\src\TransactionService\TransactionService.Application\obj\Debug\net9.0\TransactionService.Application.sourcelink.json
+D:\MY Projects\splitter-be\src\TransactionService\TransactionService.Application\obj\Debug\net9.0\Transact.D1735A21.Up2Date
+D:\MY Projects\splitter-be\src\TransactionService\TransactionService.Application\obj\Debug\net9.0\TransactionService.Application.dll
+D:\MY Projects\splitter-be\src\TransactionService\TransactionService.Application\obj\Debug\net9.0\refint\TransactionService.Application.dll
+D:\MY Projects\splitter-be\src\TransactionService\TransactionService.Application\obj\Debug\net9.0\TransactionService.Application.pdb
+D:\MY Projects\splitter-be\src\TransactionService\TransactionService.Application\obj\Debug\net9.0\ref\TransactionService.Application.dll

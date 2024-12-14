@@ -6,7 +6,6 @@ using System.Security.Claims;
 using System.Text;
 using AuthService.Application.Interfaces;
 using AuthService.Domain.Entities;
-using AuthService.Application.Services;
 
 namespace AuthService.API.Controllers;
 

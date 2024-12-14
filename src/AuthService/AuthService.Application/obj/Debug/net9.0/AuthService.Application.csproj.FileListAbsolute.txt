@@ -16,3 +16,21 @@
 /Users/gullu/Documents/Projects/expense-manag-be/src/AuthService/AuthService.Application/obj/Debug/net9.0/AuthService.Application.csproj.AssemblyReference.cache
 /Users/gullu/Documents/Projects/expense-manag-be/src/AuthService/AuthService.Application/obj/Debug/net9.0/AuthServ.67992DEE.Up2Date
 /Users/gullu/Documents/Projects/expense-manag-be/src/AuthService/AuthService.Application/obj/Debug/net9.0/AuthService.Application.sourcelink.json
+D:\MY Projects\splitter-be\src\AuthService\AuthService.Application\obj\Debug\net9.0\AuthService.Application.csproj.AssemblyReference.cache
+D:\MY Projects\splitter-be\src\AuthService\AuthService.Application\obj\Debug\net9.0\AuthService.Application.GeneratedMSBuildEditorConfig.editorconfig
+D:\MY Projects\splitter-be\src\AuthService\AuthService.Application\obj\Debug\net9.0\AuthService.Application.AssemblyInfoInputs.cache
+D:\MY Projects\splitter-be\src\AuthService\AuthService.Application\obj\Debug\net9.0\AuthService.Application.AssemblyInfo.cs
+D:\MY Projects\splitter-be\src\AuthService\AuthService.Application\obj\Debug\net9.0\AuthService.Application.csproj.CoreCompileInputs.cache
+D:\MY Projects\splitter-be\src\AuthService\AuthService.Application\obj\Debug\net9.0\AuthService.Application.sourcelink.json
+D:\MY Projects\splitter-be\src\AuthService\AuthService.Application\obj\Debug\net9.0\AuthService.Application.dll
+D:\MY Projects\splitter-be\src\AuthService\AuthService.Application\obj\Debug\net9.0\refint\AuthService.Application.dll
+D:\MY Projects\splitter-be\src\AuthService\AuthService.Application\obj\Debug\net9.0\AuthService.Application.pdb
+D:\MY Projects\splitter-be\src\AuthService\AuthService.Application\bin\Debug\net9.0\AuthService.Application.deps.json
+D:\MY Projects\splitter-be\src\AuthService\AuthService.Application\bin\Debug\net9.0\AuthService.Application.dll
+D:\MY Projects\splitter-be\src\AuthService\AuthService.Application\bin\Debug\net9.0\AuthService.Application.pdb
+D:\MY Projects\splitter-be\src\AuthService\AuthService.Application\bin\Debug\net9.0\AuthService.Domain.dll
+D:\MY Projects\splitter-be\src\AuthService\AuthService.Application\bin\Debug\net9.0\SharedLibrary.dll
+D:\MY Projects\splitter-be\src\AuthService\AuthService.Application\bin\Debug\net9.0\AuthService.Domain.pdb
+D:\MY Projects\splitter-be\src\AuthService\AuthService.Application\bin\Debug\net9.0\SharedLibrary.pdb
+D:\MY Projects\splitter-be\src\AuthService\AuthService.Application\obj\Debug\net9.0\AuthServ.67992DEE.Up2Date
+D:\MY Projects\splitter-be\src\AuthService\AuthService.Application\obj\Debug\net9.0\ref\AuthService.Application.dll

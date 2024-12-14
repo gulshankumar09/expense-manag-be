@@ -4,13 +4,6 @@ using SharedLibrary.Models;
 
 namespace AuthService.Application.Services;
 
-public interface IUserService
-{
-    Task<Result<User>> GetUserByIdAsync(Guid id);
-    Task<Result<User>> GetUserByEmailAsync(string email);
-    Task<Result<string>> RegisterUserAsync(string email, string password, string firstName, string lastName);
-}
-
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;

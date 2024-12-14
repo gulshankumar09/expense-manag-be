@@ -1,4 +1,6 @@
 using ExpenseService.API.Extensions;
+using ExpenseService.Application.Interfaces;
+using ExpenseService.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
