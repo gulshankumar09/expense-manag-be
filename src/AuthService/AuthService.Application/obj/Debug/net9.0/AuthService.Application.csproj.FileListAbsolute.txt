@@ -15,3 +15,4 @@
 /Users/gullu/Documents/Projects/expense-manag-be/src/AuthService/AuthService.Application/bin/Debug/net9.0/SharedLibrary.pdb
 /Users/gullu/Documents/Projects/expense-manag-be/src/AuthService/AuthService.Application/obj/Debug/net9.0/AuthService.Application.csproj.AssemblyReference.cache
 /Users/gullu/Documents/Projects/expense-manag-be/src/AuthService/AuthService.Application/obj/Debug/net9.0/AuthServ.67992DEE.Up2Date
+/Users/gullu/Documents/Projects/expense-manag-be/src/AuthService/AuthService.Application/obj/Debug/net9.0/AuthService.Application.sourcelink.json

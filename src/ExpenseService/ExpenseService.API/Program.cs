@@ -8,6 +8,7 @@ builder.Services.AddOpenApi();
 
 // Add after builder.Services.AddControllers();
 builder.Services.AddPersistence(builder.Configuration);
+builder.Services.AddScoped<IExpenseRepository, ExpenseRepository>();
 
 var app = builder.Build();
 

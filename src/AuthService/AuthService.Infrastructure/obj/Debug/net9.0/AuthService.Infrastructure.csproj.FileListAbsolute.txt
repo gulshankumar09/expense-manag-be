@@ -19,3 +19,4 @@
 /Users/gullu/Documents/Projects/expense-manag-be/src/AuthService/AuthService.Infrastructure/obj/Debug/net9.0/AuthService.Infrastructure.pdb
 /Users/gullu/Documents/Projects/expense-manag-be/src/AuthService/AuthService.Infrastructure/obj/Debug/net9.0/AuthService.Infrastructure.genruntimeconfig.cache
 /Users/gullu/Documents/Projects/expense-manag-be/src/AuthService/AuthService.Infrastructure/obj/Debug/net9.0/ref/AuthService.Infrastructure.dll
+/Users/gullu/Documents/Projects/expense-manag-be/src/AuthService/AuthService.Infrastructure/obj/Debug/net9.0/AuthService.Infrastructure.sourcelink.json

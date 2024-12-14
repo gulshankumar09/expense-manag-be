@@ -9,3 +9,4 @@
 /Users/gullu/Documents/Projects/expense-manag-be/src/AuthService/AuthService.Domain/obj/Debug/net9.0/refint/AuthService.Domain.dll
 /Users/gullu/Documents/Projects/expense-manag-be/src/AuthService/AuthService.Domain/obj/Debug/net9.0/AuthService.Domain.pdb
 /Users/gullu/Documents/Projects/expense-manag-be/src/AuthService/AuthService.Domain/obj/Debug/net9.0/ref/AuthService.Domain.dll
+/Users/gullu/Documents/Projects/expense-manag-be/src/AuthService/AuthService.Domain/obj/Debug/net9.0/AuthService.Domain.sourcelink.json

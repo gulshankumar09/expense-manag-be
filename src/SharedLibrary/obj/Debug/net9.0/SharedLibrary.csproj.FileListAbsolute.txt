@@ -9,3 +9,4 @@
 /Users/gullu/Documents/Projects/expense-manag-be/src/SharedLibrary/obj/Debug/net9.0/refint/SharedLibrary.dll
 /Users/gullu/Documents/Projects/expense-manag-be/src/SharedLibrary/obj/Debug/net9.0/SharedLibrary.pdb
 /Users/gullu/Documents/Projects/expense-manag-be/src/SharedLibrary/obj/Debug/net9.0/ref/SharedLibrary.dll
+/Users/gullu/Documents/Projects/expense-manag-be/src/SharedLibrary/obj/Debug/net9.0/SharedLibrary.sourcelink.json
