@@ -31,15 +31,12 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     //    return await _authContext.Users.Where(predicate).ToListAsync();
     //}
 
-    //public override async Task AddAsync(User entity)
-    //{
-    //    await _authContext.Users.AddAsync(entity);
-    //}
+    public override async Task AddAsync(User entity)
+    {
+        await _authContext.Users.AddAsync(entity);
+        await _authContext.SaveChangesAsync();
+    }
 
-    //public override async Task SaveChangesAsync()
-    //{
-    //    await _authContext.SaveChangesAsync();
-    //}
 
     public async Task<User> GetByEmailAsync(string email)
     {
