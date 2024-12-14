@@ -1,0 +1,11 @@
+/Users/gullu/Documents/Projects/expense-manag-be/src/TransactionService/TransactionService.Domain/bin/Debug/net9.0/TransactionService.Domain.deps.json
+/Users/gullu/Documents/Projects/expense-manag-be/src/TransactionService/TransactionService.Domain/bin/Debug/net9.0/TransactionService.Domain.dll
+/Users/gullu/Documents/Projects/expense-manag-be/src/TransactionService/TransactionService.Domain/bin/Debug/net9.0/TransactionService.Domain.pdb
+/Users/gullu/Documents/Projects/expense-manag-be/src/TransactionService/TransactionService.Domain/obj/Debug/net9.0/TransactionService.Domain.GeneratedMSBuildEditorConfig.editorconfig
+/Users/gullu/Documents/Projects/expense-manag-be/src/TransactionService/TransactionService.Domain/obj/Debug/net9.0/TransactionService.Domain.AssemblyInfoInputs.cache
+/Users/gullu/Documents/Projects/expense-manag-be/src/TransactionService/TransactionService.Domain/obj/Debug/net9.0/TransactionService.Domain.AssemblyInfo.cs
+/Users/gullu/Documents/Projects/expense-manag-be/src/TransactionService/TransactionService.Domain/obj/Debug/net9.0/TransactionService.Domain.csproj.CoreCompileInputs.cache
+/Users/gullu/Documents/Projects/expense-manag-be/src/TransactionService/TransactionService.Domain/obj/Debug/net9.0/TransactionService.Domain.dll
+/Users/gullu/Documents/Projects/expense-manag-be/src/TransactionService/TransactionService.Domain/obj/Debug/net9.0/refint/TransactionService.Domain.dll
+/Users/gullu/Documents/Projects/expense-manag-be/src/TransactionService/TransactionService.Domain/obj/Debug/net9.0/TransactionService.Domain.pdb
+/Users/gullu/Documents/Projects/expense-manag-be/src/TransactionService/TransactionService.Domain/obj/Debug/net9.0/ref/TransactionService.Domain.dll

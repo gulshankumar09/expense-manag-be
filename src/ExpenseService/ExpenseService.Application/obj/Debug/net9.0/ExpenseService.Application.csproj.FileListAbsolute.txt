@@ -1,0 +1,17 @@
+/Users/gullu/Documents/Projects/expense-manag-be/src/ExpenseService/ExpenseService.Application/bin/Debug/net9.0/ExpenseService.Application.deps.json
+/Users/gullu/Documents/Projects/expense-manag-be/src/ExpenseService/ExpenseService.Application/bin/Debug/net9.0/ExpenseService.Application.dll
+/Users/gullu/Documents/Projects/expense-manag-be/src/ExpenseService/ExpenseService.Application/bin/Debug/net9.0/ExpenseService.Application.pdb
+/Users/gullu/Documents/Projects/expense-manag-be/src/ExpenseService/ExpenseService.Application/obj/Debug/net9.0/ExpenseService.Application.GeneratedMSBuildEditorConfig.editorconfig
+/Users/gullu/Documents/Projects/expense-manag-be/src/ExpenseService/ExpenseService.Application/obj/Debug/net9.0/ExpenseService.Application.AssemblyInfoInputs.cache
+/Users/gullu/Documents/Projects/expense-manag-be/src/ExpenseService/ExpenseService.Application/obj/Debug/net9.0/ExpenseService.Application.AssemblyInfo.cs
+/Users/gullu/Documents/Projects/expense-manag-be/src/ExpenseService/ExpenseService.Application/obj/Debug/net9.0/ExpenseService.Application.csproj.CoreCompileInputs.cache
+/Users/gullu/Documents/Projects/expense-manag-be/src/ExpenseService/ExpenseService.Application/obj/Debug/net9.0/ExpenseService.Application.dll
+/Users/gullu/Documents/Projects/expense-manag-be/src/ExpenseService/ExpenseService.Application/obj/Debug/net9.0/refint/ExpenseService.Application.dll
+/Users/gullu/Documents/Projects/expense-manag-be/src/ExpenseService/ExpenseService.Application/obj/Debug/net9.0/ExpenseService.Application.pdb
+/Users/gullu/Documents/Projects/expense-manag-be/src/ExpenseService/ExpenseService.Application/obj/Debug/net9.0/ref/ExpenseService.Application.dll
+/Users/gullu/Documents/Projects/expense-manag-be/src/ExpenseService/ExpenseService.Application/bin/Debug/net9.0/ExpenseService.Domain.dll
+/Users/gullu/Documents/Projects/expense-manag-be/src/ExpenseService/ExpenseService.Application/bin/Debug/net9.0/SharedLibrary.dll
+/Users/gullu/Documents/Projects/expense-manag-be/src/ExpenseService/ExpenseService.Application/bin/Debug/net9.0/ExpenseService.Domain.pdb
+/Users/gullu/Documents/Projects/expense-manag-be/src/ExpenseService/ExpenseService.Application/bin/Debug/net9.0/SharedLibrary.pdb
+/Users/gullu/Documents/Projects/expense-manag-be/src/ExpenseService/ExpenseService.Application/obj/Debug/net9.0/ExpenseService.Application.csproj.AssemblyReference.cache
+/Users/gullu/Documents/Projects/expense-manag-be/src/ExpenseService/ExpenseService.Application/obj/Debug/net9.0/ExpenseS.D0FAE22A.Up2Date

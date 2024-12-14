@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "ExpenseService.Domain/1.0.0": {
+        "runtime": {
+          "ExpenseService.Domain.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "ExpenseService.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

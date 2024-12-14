@@ -1,0 +1,11 @@
+/Users/gullu/Documents/Projects/expense-manag-be/src/SharedLibrary/bin/Debug/net9.0/SharedLibrary.deps.json
+/Users/gullu/Documents/Projects/expense-manag-be/src/SharedLibrary/bin/Debug/net9.0/SharedLibrary.dll
+/Users/gullu/Documents/Projects/expense-manag-be/src/SharedLibrary/bin/Debug/net9.0/SharedLibrary.pdb
+/Users/gullu/Documents/Projects/expense-manag-be/src/SharedLibrary/obj/Debug/net9.0/SharedLibrary.GeneratedMSBuildEditorConfig.editorconfig
+/Users/gullu/Documents/Projects/expense-manag-be/src/SharedLibrary/obj/Debug/net9.0/SharedLibrary.AssemblyInfoInputs.cache
+/Users/gullu/Documents/Projects/expense-manag-be/src/SharedLibrary/obj/Debug/net9.0/SharedLibrary.AssemblyInfo.cs
+/Users/gullu/Documents/Projects/expense-manag-be/src/SharedLibrary/obj/Debug/net9.0/SharedLibrary.csproj.CoreCompileInputs.cache
+/Users/gullu/Documents/Projects/expense-manag-be/src/SharedLibrary/obj/Debug/net9.0/SharedLibrary.dll
+/Users/gullu/Documents/Projects/expense-manag-be/src/SharedLibrary/obj/Debug/net9.0/refint/SharedLibrary.dll
+/Users/gullu/Documents/Projects/expense-manag-be/src/SharedLibrary/obj/Debug/net9.0/SharedLibrary.pdb
+/Users/gullu/Documents/Projects/expense-manag-be/src/SharedLibrary/obj/Debug/net9.0/ref/SharedLibrary.dll
