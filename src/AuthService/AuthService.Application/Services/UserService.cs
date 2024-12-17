@@ -36,7 +36,7 @@ public class UserService : IUserService
             return Result<string>.Failure("Email already registered");
 
         var passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
-        var user = new User(email, passwordHash, firstName, lastName);
+        var user = User.Create(email, passwordHash, firstName, lastName);
         
         await _userRepository.AddAsync(user);
         await _userRepository.SaveChangesAsync();

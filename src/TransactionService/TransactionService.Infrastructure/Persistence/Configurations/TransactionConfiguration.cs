@@ -1,14 +1,16 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SharedLibrary.Domain;
+using SharedLibrary.Infrastructure.Configurations;
 using TransactionService.Domain.Entities;
 
 namespace TransactionService.Infrastructure.Persistence.Configurations;
 
-public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
+public class TransactionConfiguration : BaseEntityConfiguration<Transaction>
 {
-    public void Configure(EntityTypeBuilder<Transaction> builder)
+    public override void Configure(EntityTypeBuilder<Transaction> builder)
     {
-        builder.HasKey(t => t.Id);
+        base.Configure(builder);
 
         builder.Property(t => t.FromUserId)
             .IsRequired();
@@ -23,9 +25,6 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
         builder.Property(t => t.Description)
             .IsRequired()
             .HasMaxLength(500);
-
-        builder.Property(t => t.CreatedAt)
-            .IsRequired();
 
         builder.Property(t => t.Status)
             .IsRequired()

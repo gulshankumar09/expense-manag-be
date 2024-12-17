@@ -1,14 +1,15 @@
 using ExpenseService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SharedLibrary.Infrastructure.Configurations;
 
 namespace ExpenseService.Infrastructure.Persistence.Configurations;
 
-public class ExpenseConfiguration : IEntityTypeConfiguration<Expense>
+public class ExpenseConfiguration : BaseEntityConfiguration<Expense>
 {
-    public void Configure(EntityTypeBuilder<Expense> builder)
+    public override void Configure(EntityTypeBuilder<Expense> builder)
     {
-        builder.HasKey(e => e.Id);
+        base.Configure(builder);
 
         builder.Property(e => e.Description)
             .IsRequired()
@@ -19,9 +20,6 @@ public class ExpenseConfiguration : IEntityTypeConfiguration<Expense>
             .HasPrecision(18, 2);
 
         builder.Property(e => e.PaidByUserId)
-            .IsRequired();
-
-        builder.Property(e => e.CreatedAt)
             .IsRequired();
 
         builder.HasMany(e => e.Splits)

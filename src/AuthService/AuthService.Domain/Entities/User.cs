@@ -1,21 +1,29 @@
+using SharedLibrary.Domain;
+using AuthService.Domain.ValueObjects;
+
 namespace AuthService.Domain.Entities;
 
-public class User
+public class User : BaseEntity
 {
-    public Guid Id { get; private set; }
-    public string Email { get; private set; }
-    public string PasswordHash { get; private set; }
-    public string FirstName { get; private set; }
-    public string LastName { get; private set; }
-    public DateTime CreatedAt { get; private set; }
+    public Email Email { get; private set; }
+    public Password PasswordHash { get; private set; }
+    public PersonName Name { get; private set; }
 
-    public User(string email, string passwordHash, string firstName, string lastName)
+    public User(Email email, Password passwordHash, PersonName name)
+        : base()
     {
-        Id = Guid.NewGuid();
         Email = email;
         PasswordHash = passwordHash;
-        FirstName = firstName;
-        LastName = lastName;
-        CreatedAt = DateTime.UtcNow;
+        Name = name;
+    }
+
+    // Factory method for creating a new user
+    public static User Create(string email, string passwordHash, string firstName, string lastName)
+    {
+        return new User(
+            Email.Create(email),
+            Password.Create(passwordHash),
+            PersonName.Create(firstName, lastName)
+        );
     }
 } 

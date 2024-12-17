@@ -1,7 +1,4 @@
 using AuthService.API.Extensions;
-using AuthService.Application.Interfaces;
-using AuthService.Application.Services;
-using AuthService.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -9,13 +6,12 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Add JWT Authentication
-var key = builder.Configuration["Jwt:Key"];
+var key = builder.Configuration["Jwt:Key"] ?? throw new ArgumentNullException("Key");
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -37,8 +33,7 @@ builder.Services.AddAuthentication(options =>
 
 // Add after builder.Services.AddControllers();
 builder.Services.AddPersistence(builder.Configuration);
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddApplicationServices();
 
 var app = builder.Build();
 

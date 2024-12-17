@@ -26,7 +26,7 @@ public class AuthController : ControllerBase
     public async Task<ActionResult<Result<string>>> Login([FromBody] LoginRequest request)
     {
         var user = await _userService.GetUserByEmailAsync(request.Email);
-        if (user == null || !VerifyPassword(request.Password, user.Data.PasswordHash)) // Implement password verification
+        if (user == null || !VerifyPassword(request.Password, user.Data.PasswordHash.Hash)) // Implement password verification
         {
             return Unauthorized(Result<string>.Failure("Invalid credentials"));
         }
