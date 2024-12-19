@@ -15,12 +15,6 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         _authContext = context;
     }
 
-    public override async Task AddAsync(User entity)
-    {
-        await _authContext.Users.AddAsync(entity);
-        await _authContext.SaveChangesAsync();
-    }
-
     public async Task<User> GetByEmailAsync(string email)
     {
         var users = await _authContext.Users
