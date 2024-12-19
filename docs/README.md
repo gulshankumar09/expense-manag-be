@@ -43,7 +43,12 @@ dotnet tool update --global dotnet-ef
 
 dotnet ef migrations add InitialCreate --startup-project ../AuthService.API
 
+dotnet ef migrations add CheckUpdate --startup-project src/AuthService/AuthService.API --project src/AuthService/AuthService.Infrastructure/AuthService.Infrastructure.csproj
+
 dotnet ef database update --startup-project ../AuthService.API
 
+dotnet ef database update --startup-project src/AuthService/AuthService.API
 
 dotnet run --launch-profile https
+
+
