@@ -49,7 +49,7 @@ builder.Services.AddRateLimiter(options =>
 
 // Add after builder.Services.AddControllers();
 builder.Services.AddPersistence(builder.Configuration);
-builder.Services.AddApplicationServices();
+builder.Services.AddApplicationServices(builder.Configuration);
 
 var app = builder.Build();
 

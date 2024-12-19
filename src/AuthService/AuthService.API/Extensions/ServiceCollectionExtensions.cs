@@ -6,6 +6,7 @@ using AuthService.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using SharedLibrary.Infrastructure.Interceptors;
 using SharedLibrary.Services;
+using AuthService.Application.Configuration;
 
 namespace AuthService.API.Extensions;
 
@@ -32,21 +33,21 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+    public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddHttpContextAccessor();
-        services.AddScoped<IAuditService, AuditService>();
-        
-        // Register email and authentication services
-        services.AddScoped<IEmailService, EmailService>();
-        services.AddScoped<IOtpService, OtpService>();
-        services.AddHttpClient<IGoogleAuthService, GoogleAuthService>();
 
-        // Register repositories
+        // Configure Email Settings
+        services.Configure<EmailSettings>(configuration.GetSection("Email"));
+
+        // Register Services
         services.AddScoped<IUserRepository, UserRepository>();
-
-        // Register services
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IOtpService, OtpService>();
+        services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<IGoogleAuthService, GoogleAuthService>();
+        services.AddScoped<IAuditService, AuditService>();
+        services.AddHttpClient();
 
         return services;
     }

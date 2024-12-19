@@ -51,4 +51,5 @@ dotnet ef database update --startup-project src/AuthService/AuthService.API
 
 dotnet run --launch-profile https
 
+dotnet watch --project src/AuthService/AuthService.API/AuthService.API.csproj --launch-profile https
 
