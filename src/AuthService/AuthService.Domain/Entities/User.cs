@@ -9,6 +9,14 @@ public class User : BaseEntity
     public Password PasswordHash { get; private set; }
     public PersonName Name { get; private set; }
 
+    // Required by EF Core
+    protected User() : base()
+    {
+        Email = Email.Create("temp@temp.com");
+        PasswordHash = Password.Create("temp");
+        Name = PersonName.Create("Temp", "User");
+    }
+
     public User(Email email, Password passwordHash, PersonName name)
         : base()
     {
