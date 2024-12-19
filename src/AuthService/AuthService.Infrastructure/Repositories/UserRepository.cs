@@ -40,7 +40,9 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     public async Task<User> GetByEmailAsync(string email)
     {
         return await _authContext.Users
-            .FirstOrDefaultAsync(u => string.Equals(u.Email.Value, email, StringComparison.OrdinalIgnoreCase))
+            .Where(u => !u.IsDeleted && u.IsActive)
+            .Where(u => u.Email.Value.Equals(email, StringComparison.OrdinalIgnoreCase))
+            .FirstOrDefaultAsync() 
             ?? throw new KeyNotFoundException($"User with email {email} not found");
     }
 }

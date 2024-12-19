@@ -2,6 +2,7 @@ using AuthService.Application.Interfaces;
 using AuthService.Application.Services;
 using AuthService.Infrastructure.Persistence;
 using AuthService.Infrastructure.Repositories;
+using AuthService.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using SharedLibrary.Infrastructure.Interceptors;
 using SharedLibrary.Services;
@@ -36,6 +37,11 @@ public static class ServiceCollectionExtensions
         services.AddHttpContextAccessor();
         services.AddScoped<IAuditService, AuditService>();
         
+        // Register email and authentication services
+        services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<IOtpService, OtpService>();
+        services.AddHttpClient<IGoogleAuthService, GoogleAuthService>();
+
         // Register repositories
         services.AddScoped<IUserRepository, UserRepository>();
 

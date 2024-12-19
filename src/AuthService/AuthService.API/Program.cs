@@ -2,6 +2,8 @@ using AuthService.API.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +33,20 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddRateLimiter(options =>
+{
+     options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+           partitionKey: context.User?.Identity?.Name ?? context.Request.Headers.Host.ToString(),
+          factory: partition => new FixedWindowRateLimiterOptions
+           {
+                AutoReplenishment = true,
+                PermitLimit = 10,
+               Window = TimeSpan.FromMinutes(1)
+           }));
+});
+
+
 // Add after builder.Services.AddControllers();
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddApplicationServices();
@@ -47,5 +63,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapControllers();
 
 app.Run();

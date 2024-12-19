@@ -1,3 +1,4 @@
+using AuthService.Application.DTOs;
 using AuthService.Application.Interfaces;
 using AuthService.Domain.Entities;
 using SharedLibrary.Models;
@@ -29,7 +30,7 @@ public class UserService : IUserService
             : Result<User>.Failure("User not found");
     }
 
-    public async Task<Result<string>> RegisterUserAsync(string email, string password, string firstName, string lastName)
+    public async Task<Result<string>> RegisterUserAsync(string email, string password, string firstName, string lastName, string phoneNumber)
     {
         var existingUser = await _userRepository.GetByEmailAsync(email);
         if (existingUser != null)
@@ -37,10 +38,21 @@ public class UserService : IUserService
 
         var passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
         var user = User.Create(email, passwordHash, firstName, lastName);
+        user.SetPhoneNumber(phoneNumber);
         
         await _userRepository.AddAsync(user);
         await _userRepository.SaveChangesAsync();
         
         return Result<string>.Success("User registered successfully");
+    }
+
+    public Task<Result<AuthResponse>> VerifyOtpAsync(string email, string otp)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Result<AuthResponse>> GoogleLoginAsync(string email, string googleId, string firstName, string lastName)
+    {
+        throw new NotImplementedException();
     }
 } 

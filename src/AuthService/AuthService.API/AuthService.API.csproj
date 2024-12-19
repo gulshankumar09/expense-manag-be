@@ -21,6 +21,7 @@
     </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.0" />
+    <PackageReference Include="System.Threading.RateLimiting" Version="9.0.0" />
   </ItemGroup>
 
 </Project>

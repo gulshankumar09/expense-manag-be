@@ -40,5 +40,17 @@ public class UserConfiguration : BaseEntityConfiguration<User>
             .HasMaxLength(50)
             .HasColumnName("LastName");
         });
+
+        builder.Property(u => u.GoogleId)
+            .HasMaxLength(100);
+
+        builder.Property(u => u.PhoneNumber)
+            .HasMaxLength(20);
+
+        builder.Property(u => u.VerificationToken)
+            .HasMaxLength(100);
+
+        builder.Property(u => u.RefreshToken)
+            .HasMaxLength(100);
     }
 } 

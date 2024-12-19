@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using AuthService.Application.Interfaces;
 using AuthService.Domain.Entities;
+using AuthService.Application.DTOs;
 
 namespace AuthService.API.Controllers;
 
@@ -14,12 +15,23 @@ namespace AuthService.API.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly IOtpService _otpService;
+    private readonly IGoogleAuthService _googleAuthService;
     private readonly IConfiguration _configuration;
+    private readonly ILogger<AuthController> _logger;
 
-    public AuthController(IUserService userService, IConfiguration configuration)
+    public AuthController(
+        IUserService userService,
+        IOtpService otpService,
+        IGoogleAuthService googleAuthService,
+        IConfiguration configuration,
+        ILogger<AuthController> logger)
     {
         _userService = userService;
+        _otpService = otpService;
+        _googleAuthService = googleAuthService;
         _configuration = configuration;
+        _logger = logger;
     }
 
     [HttpPost("login")]
@@ -43,13 +55,54 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
+    [ProducesResponseType(typeof(Result<string>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<string>), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<Result<string>>> Register([FromBody] RegisterRequest request)
     {
-        var result = await _userService.RegisterUserAsync(
-            request.Email, 
-            request.Password, 
-            request.FirstName, 
-            request.LastName);
+        try
+        {
+            var result = await _userService.RegisterUserAsync(
+                request.Email,
+                request.Password,
+                request.FirstName,
+                request.LastName,
+                request.PhoneNumber);
+
+            if (!result.IsSuccess)
+                return BadRequest(result);
+
+            // Generate and send OTP
+            var otp = _otpService.GenerateOtp();
+            await _otpService.SendOtpAsync(request.Email, otp);
+
+            return Ok(Result<string>.Success("Registration successful. Please verify your email."));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during registration for email: {Email}", request.Email);
+            return StatusCode(500, Result<string>.Failure("An error occurred during registration."));
+        }
+    }
+
+    [HttpPost("verify-otp")]
+    public async Task<ActionResult<Result<AuthResponse>>> VerifyOtp([FromBody] VerifyOtpRequest request)
+    {
+        var result = await _userService.VerifyOtpAsync(request.Email, request.Otp);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpPost("google-login")]
+    public async Task<ActionResult<Result<AuthResponse>>> GoogleLogin([FromBody] GoogleAuthRequest request)
+    {
+        var googleUser = await _googleAuthService.VerifyGoogleTokenAsync(request.IdToken);
+        if (googleUser == null)
+            return BadRequest(Result<AuthResponse>.Failure("Invalid Google token"));
+
+        var result = await _userService.GoogleLoginAsync(
+            googleUser.Email,
+            googleUser.GoogleId,
+            googleUser.FirstName,
+            googleUser.LastName);
 
         return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
@@ -75,6 +128,3 @@ public class AuthController : ControllerBase
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }
-
-public record LoginRequest(string Email, string Password);
-public record RegisterRequest(string Email, string Password, string FirstName, string LastName); 
