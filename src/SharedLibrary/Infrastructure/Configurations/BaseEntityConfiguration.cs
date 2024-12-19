@@ -13,12 +13,15 @@ public abstract class BaseEntityConfiguration<T> : IEntityTypeConfiguration<T> w
         builder.Property(e => e.CreatedAt)
             .IsRequired();
 
-        builder.Property(e => e.UpdatedAt);
+        builder.Property(e => e.UpdatedAt)
+            .IsRequired(false);
 
         builder.Property(e => e.CreatedBy)
+            .IsRequired()
             .HasMaxLength(50);
 
         builder.Property(e => e.UpdatedBy)
+            .IsRequired(false)
             .HasMaxLength(50);
 
         builder.Property(e => e.IsDeleted)
