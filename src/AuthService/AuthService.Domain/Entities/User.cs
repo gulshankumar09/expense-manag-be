@@ -1,42 +1,43 @@
 using SharedLibrary.Domain;
 using AuthService.Domain.ValueObjects;
+using Microsoft.AspNetCore.Identity;
 
 namespace AuthService.Domain.Entities;
 
-public class User : BaseEntity
+public class User : IdentityUser //: BaseEntity
 {
-    public Email Email { get; private set; }
-    public Password PasswordHash { get; private set; }
-    public PersonName Name { get; private set; }
-    public string? GoogleId { get; private set; }
-    public string? PhoneNumber { get; private set; }
-    public bool IsEmailVerified { get; private set; }
-    public string? VerificationToken { get; private set; }
-    public DateTime? VerificationTokenExpiry { get; private set; }
-    public string? RefreshToken { get; private set; }
-    public DateTime? RefreshTokenExpiry { get; private set; }
+    public PersonName Name { get; set; }
+    public string? GoogleId { get; set; }
+    public string? VerificationToken { get; set; }
+    public DateTime? VerificationTokenExpiry { get; set; }
+    public string? RefreshToken { get; set; }
+    public DateTime? RefreshTokenExpiry { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+    public string CreatedBy { get; set; }
+    public string? UpdatedBy { get; set; }
+    public bool IsDeleted { get; set; } = false; // default value is false
+    public bool IsActive { get; set; } = true; // default value is true
 
-    protected User() : base()
+    public User() : base()
     {
-        Email = Email.Create("temp@temp.com");
-        PasswordHash = Password.Create("temp");
+        Email = "temp@temp.com";
         Name = PersonName.Create("Temp", "User");
     }
 
-    public User(Email email, Password passwordHash, PersonName name)
+    public User(string email, string passwordHash, PersonName name)
         : base()
     {
         Email = email;
         PasswordHash = passwordHash;
         Name = name;
-        IsEmailVerified = false;
     }
 
     public static User Create(string email, string passwordHash, string firstName, string lastName)
     {
         var user = new User(
-            Email.Create(email),
-            Password.Create(passwordHash),
+            email,
+            passwordHash,
             PersonName.Create(firstName, lastName)
         );
         return user;
@@ -45,12 +46,12 @@ public class User : BaseEntity
     public static User CreateWithGoogle(string email, string googleId, string firstName, string lastName)
     {
         var user = new User(
-            Email.Create(email),
-            Password.Create(Guid.NewGuid().ToString()), // Temporary password for Google users
+            email,
+            Guid.NewGuid().ToString(), // Temporary password for Google users
             PersonName.Create(firstName, lastName)
         );
         user.GoogleId = googleId;
-        user.IsEmailVerified = true; // Google users are pre-verified
+        user.EmailConfirmed = true; // Google users are pre-verified
         return user;
     }
 
@@ -68,7 +69,7 @@ public class User : BaseEntity
 
     public void VerifyEmail()
     {
-        IsEmailVerified = true;
+        EmailConfirmed = true;
         VerificationToken = null;
         VerificationTokenExpiry = null;
     }

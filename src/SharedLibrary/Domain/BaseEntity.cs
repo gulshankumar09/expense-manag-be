@@ -2,23 +2,22 @@ namespace SharedLibrary.Domain;
 
 public abstract class BaseEntity
 {
-    public Guid Id { get; protected set; }
+    public int Id { get; protected set; }
     public DateTime CreatedAt { get; protected set; }
     public DateTime? UpdatedAt { get; protected set; }
     public string CreatedBy { get; protected set; }
     public string? UpdatedBy { get; protected set; }
-    public bool IsDeleted { get; protected set; } = false;
-    public bool IsActive { get; protected set; } = true;
+    public bool IsDeleted { get; protected set; } = false; // default value is false
+    public bool IsActive { get; protected set; } = true; // default value is true
 
     protected BaseEntity()
     {
-        Id = Guid.NewGuid();
-        CreatedAt = DateTime.UtcNow;
     }
 
     public void SetCreatedBy(string userId)
     {
         CreatedBy = userId;
+        CreatedAt = DateTime.UtcNow;
     }
 
     public void SetUpdatedBy(string userId)

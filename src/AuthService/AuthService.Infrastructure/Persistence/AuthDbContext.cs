@@ -1,19 +1,31 @@
 using AuthService.Domain.Entities;
-using AuthService.Infrastructure.Persistence.Configurations;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using SharedLibrary.Infrastructure.Interceptors;
 
 namespace AuthService.Infrastructure.Persistence;
 
-public class AuthDbContext : DbContext
+public class AuthDbContext : IdentityDbContext<User>
 {
-    public DbSet<User> Users { get; set; }
+    private readonly AuditableEntitySaveChangesInterceptor _auditableEntitySaveChangesInterceptor;
 
-    public AuthDbContext(DbContextOptions<AuthDbContext> options) : base(options)
+    public AuthDbContext(
+        DbContextOptions<AuthDbContext> options,
+        AuditableEntitySaveChangesInterceptor auditableEntitySaveChangesInterceptor)
+        : base(options)
     {
+        _auditableEntitySaveChangesInterceptor = auditableEntitySaveChangesInterceptor;
     }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        modelBuilder.ApplyConfiguration(new UserConfiguration());
+        base.OnModelCreating(builder);
+        builder.ApplyConfigurationsFromAssembly(typeof(AuthDbContext).Assembly);
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.AddInterceptors(_auditableEntitySaveChangesInterceptor);
+        base.OnConfiguring(optionsBuilder);
     }
 } 

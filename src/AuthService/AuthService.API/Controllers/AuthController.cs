@@ -1,11 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SharedLibrary.Models;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using AuthService.Application.Interfaces;
-using AuthService.Domain.Entities;
 using AuthService.Application.DTOs;
 
 namespace AuthService.API.Controllers;
@@ -35,60 +30,12 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<Result<string>>> Login([FromBody] LoginRequest request)
-    {
-        var user = await _userService.GetUserByEmailAsync(request.Email);
-        if (user == null || !VerifyPassword(request.Password, user.Data.PasswordHash.Hash)) // Implement password verification
-        {
-            return Unauthorized(Result<string>.Failure("Invalid credentials"));
-        }
-
-        var token = GenerateJwtToken(user.Data);
-        return Ok(Result<string>.Success(token));
-    }
-    
-    private bool VerifyPassword(string password, string passwordHash)
-    {
-        // Implement your password verification logic here
-        // For example, using BCrypt or any hashing algorithm
-        return BCrypt.Net.BCrypt.Verify(password, passwordHash);
-    }
-
-    [HttpPost("register")]
-    [ProducesResponseType(typeof(Result<string>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<AuthResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result<string>), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Result<string>>> Register([FromBody] RegisterRequest request)
+    public async Task<ActionResult<Result<AuthResponse>>> Login([FromBody] LoginRequest request)
     {
-        try
-        {
-            var result = await _userService.RegisterUserAsync(
-                request.Email,
-                request.Password,
-                request.FirstName,
-                request.LastName,
-                request.PhoneNumber);
-
-            if (!result.IsSuccess)
-                return BadRequest(result);
-
-            // Generate and send OTP
-            var otp = _otpService.GenerateOtp();
-            await _otpService.SendOtpAsync(request.Email, otp);
-
-            return Ok(Result<string>.Success("Registration successful. Please verify your email."));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error during registration for email: {Email}", request.Email);
-            return StatusCode(500, Result<string>.Failure("An error occurred during registration."));
-        }
-    }
-
-    [HttpPost("verify-otp")]
-    public async Task<ActionResult<Result<AuthResponse>>> VerifyOtp([FromBody] VerifyOtpRequest request)
-    {
-        var result = await _userService.VerifyOtpAsync(request.Email, request.Otp);
-        return result.IsSuccess ? Ok(result) : BadRequest(result);
+        var result = await _userService.LoginAsync(request);
+        return result.IsSuccess ? Ok(result) : BadRequest(result.Error);
     }
 
     [HttpPost("google-login")]
@@ -107,24 +54,4 @@ public class AuthController : ControllerBase
         return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
-    private string GenerateJwtToken(User user)
-    {
-        var claims = new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("YourSuperSecretKeyHere")); // Use the same key as in appsettings.json
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var token = new JwtSecurityToken(
-            issuer: "YourIssuer",
-            audience: "YourAudience",
-            claims: claims,
-            expires: DateTime.Now.AddMinutes(30),
-            signingCredentials: creds);
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
 }

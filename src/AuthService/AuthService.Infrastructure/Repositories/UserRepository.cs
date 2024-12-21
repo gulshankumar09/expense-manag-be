@@ -21,6 +21,6 @@ public class UserRepository : GenericRepository<User>, IUserRepository
             .Where(u => !u.IsDeleted && u.IsActive)
             .ToListAsync();
 
-        return users.FirstOrDefault(u => u.Email.Value.Equals(email, StringComparison.OrdinalIgnoreCase));
+        return users.FirstOrDefault(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
     }
 }

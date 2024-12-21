@@ -15,7 +15,7 @@ public class GoogleAuthService : IGoogleAuthService
         _configuration = configuration;
     }
 
-    public async Task<GoogleUserInfo> VerifyGoogleTokenAsync(string idToken)
+    public async Task<GoogleUserInfo?> VerifyGoogleTokenAsync(string idToken)
     {
         try
         {
