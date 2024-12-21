@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
-using AuthService.Domain.Entities;
 using AuthService.Application.DTOs;
+using AuthService.Application.Interfaces;
 using SharedLibrary.Models;
 
 namespace AuthService.API.Controllers;
@@ -12,68 +11,56 @@ namespace AuthService.API.Controllers;
 [Authorize(Roles = "Admin")]
 public class RolesController : ControllerBase
 {
-    private readonly RoleManager<IdentityRole> _roleManager;
-    private readonly UserManager<User> _userManager;
+    private readonly IRoleService _roleService;
     private readonly ILogger<RolesController> _logger;
 
     public RolesController(
-        RoleManager<IdentityRole> roleManager,
-        UserManager<User> userManager,
+        IRoleService roleService,
         ILogger<RolesController> logger)
     {
-        _roleManager = roleManager;
-        _userManager = userManager;
+        _roleService = roleService;
         _logger = logger;
     }
 
     [HttpPost("create")]
+    [ProducesResponseType(typeof(Result<string>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<string>), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<Result<string>>> CreateRole([FromBody] CreateRoleRequest request)
     {
-        if (await _roleManager.RoleExistsAsync(request.Name))
-            return BadRequest(Result<string>.Failure("Role already exists"));
-
-        var result = await _roleManager.CreateAsync(new IdentityRole(request.Name));
-        if (!result.Succeeded)
-            return BadRequest(Result<string>.Failure(result.Errors.First().Description));
-
-        return Ok(Result<string>.Success($"Role '{request.Name}' created successfully"));
+        var result = await _roleService.CreateRoleAsync(request);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     [HttpPost("assign")]
+    [ProducesResponseType(typeof(Result<string>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<string>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(Result<string>), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<Result<string>>> AssignRole([FromBody] AssignRoleRequest request)
     {
-        var user = await _userManager.FindByIdAsync(request.UserId);
-        if (user == null)
-            return NotFound(Result<string>.Failure("User not found"));
-
-        if (!await _roleManager.RoleExistsAsync(request.RoleName))
-            return NotFound(Result<string>.Failure("Role not found"));
-
-        if (await _userManager.IsInRoleAsync(user, request.RoleName))
-            return BadRequest(Result<string>.Failure("User is already in this role"));
-
-        var result = await _userManager.AddToRoleAsync(user, request.RoleName);
-        if (!result.Succeeded)
-            return BadRequest(Result<string>.Failure(result.Errors.First().Description));
-
-        return Ok(Result<string>.Success($"Role '{request.RoleName}' assigned to user successfully"));
+        var result = await _roleService.AssignRoleAsync(request);
+        if (!result.IsSuccess)
+        {
+            return result.Error.Contains("not found") 
+                ? NotFound(result) 
+                : BadRequest(result);
+        }
+        return Ok(result);
     }
 
     [HttpGet("list")]
-    public ActionResult<Result<IEnumerable<string>>> ListRoles()
+    [ProducesResponseType(typeof(Result<IEnumerable<string>>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<Result<IEnumerable<string>>>> ListRoles()
     {
-        var roles = _roleManager.Roles.Select(r => r.Name).ToList();
-        return Ok(Result<IEnumerable<string>>.Success(roles!));
+        var result = await _roleService.ListRolesAsync();
+        return Ok(result);
     }
 
     [HttpGet("user/{userId}")]
+    [ProducesResponseType(typeof(Result<IEnumerable<string>>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<IEnumerable<string>>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Result<IEnumerable<string>>>> GetUserRoles(string userId)
     {
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user == null)
-            return NotFound(Result<IEnumerable<string>>.Failure("User not found"));
-
-        var roles = await _userManager.GetRolesAsync(user);
-        return Ok(Result<IEnumerable<string>>.Success(roles));
+        var result = await _roleService.GetUserRolesAsync(userId);
+        return result.IsSuccess ? Ok(result) : NotFound(result);
     }
 } 

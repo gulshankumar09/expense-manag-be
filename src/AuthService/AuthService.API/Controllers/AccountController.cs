@@ -36,9 +36,9 @@ public class AccountController : ControllerBase
     {
         var result = await _userService.RegisterUserAsync(request);
         if (!result.IsSuccess)
-            return BadRequest(result.Error);
+            return BadRequest(result);
 
-        return Ok(result.Data);
+        return Ok(result);
     }
 
     [HttpPost("verify-otp")]

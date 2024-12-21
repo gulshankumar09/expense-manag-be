@@ -71,7 +71,7 @@ public class UserService : IUserService
             Name = PersonName.Create(request.FirstName, request.LastName),
             PhoneNumber = request.PhoneNumber,
             CreatedAt = DateTime.UtcNow,
-            CreatedBy = request.Email
+            CreatedBy = "SYSTEM_USER"
         };
 
         var result = await _userManager.CreateAsync(user, request.Password);

@@ -81,6 +81,7 @@ public static class ServiceCollectionExtensions
         // Register Application Services
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IOtpService, OtpService>();
+        services.AddScoped<IRoleService, RoleService>();
 
         // Add HTTP client for external services
         services.AddHttpClient();
