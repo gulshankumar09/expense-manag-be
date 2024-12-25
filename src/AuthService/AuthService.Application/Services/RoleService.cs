@@ -7,12 +7,21 @@ using SharedLibrary.Models;
 
 namespace AuthService.Application.Services;
 
+/// <summary>
+/// Service implementation for managing roles and role assignments
+/// </summary>
 public class RoleService : IRoleService
 {
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly UserManager<User> _userManager;
     private readonly ILogger<RoleService> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the RoleService
+    /// </summary>
+    /// <param name="roleManager">The ASP.NET Identity role manager</param>
+    /// <param name="userManager">The ASP.NET Identity user manager</param>
+    /// <param name="logger">The logger instance</param>
     public RoleService(
         RoleManager<IdentityRole> roleManager,
         UserManager<User> userManager,
@@ -23,6 +32,7 @@ public class RoleService : IRoleService
         _logger = logger;
     }
 
+    /// <inheritdoc/>
     public async Task<Result<string>> CreateRoleAsync(CreateRoleRequest request)
     {
         try
@@ -44,6 +54,7 @@ public class RoleService : IRoleService
         }
     }
 
+    /// <inheritdoc/>
     public async Task<Result<string>> AssignRoleAsync(AssignRoleRequest request)
     {
         try
@@ -72,6 +83,7 @@ public class RoleService : IRoleService
         }
     }
 
+    /// <inheritdoc/>
     public async Task<Result<IEnumerable<string>>> ListRolesAsync()
     {
         try
@@ -86,6 +98,7 @@ public class RoleService : IRoleService
         }
     }
 
+    /// <inheritdoc/>
     public async Task<Result<IEnumerable<string>>> GetUserRolesAsync(string userId)
     {
         try

@@ -47,4 +47,13 @@ public record CreateRoleRequest(
 
 public record AssignRoleRequest(
     string UserId,
-    string RoleName); 
+    string RoleName);
+
+public record UpdateUserRequest(
+    string FirstName,
+    string LastName,
+    string PhoneNumber);
+
+public record ChangePasswordRequest(
+    string CurrentPassword,
+    string NewPassword); 

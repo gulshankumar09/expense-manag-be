@@ -2,11 +2,6 @@ using AuthService.Application.DTOs;
 using AuthService.Application.Interfaces;
 using AuthService.Domain.Entities;
 using SharedLibrary.Models;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Identity;
 using AuthService.Domain.ValueObjects;
 
@@ -15,26 +10,20 @@ namespace AuthService.Application.Services;
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
-    private readonly SignInManager<User> _signInManager;
     private readonly UserManager<User> _userManager;
     private readonly IOtpService _otpService;
     private readonly IEmailService _emailService;
-    private readonly IConfiguration _configuration;
 
     public UserService(
-        IUserRepository userRepository, 
-        IConfiguration configuration,
+        IUserRepository userRepository,
         UserManager<User> userManager,
         IOtpService otpService,
-        IEmailService emailService,
-        SignInManager<User> signInManager)
+        IEmailService emailService)
     {
         _userRepository = userRepository;
-        _configuration = configuration;
         _userManager = userManager;
         _otpService = otpService;
         _emailService = emailService;
-        _signInManager = signInManager;
     }
 
     public async Task<Result<User>> GetUserByIdAsync(Guid id)
@@ -90,169 +79,56 @@ public class UserService : IUserService
         return Result<string>.Success("Registration successful. Please verify your email.");
     }
 
-    public async Task<Result<AuthResponse>> VerifyOtpAsync(VerifyOtpRequest request)
+    public async Task<Result<string>> UpdateUserAsync(string userId, UpdateUserRequest request)
     {
-        var user = await _userManager.FindByEmailAsync(request.Email);
+        var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
-            return Result<AuthResponse>.Failure("User not found");
+            return Result<string>.Failure("User not found");
 
-        if (user.EmailConfirmed)
-            return Result<AuthResponse>.Failure("Email is already verified");
+        user.Name = PersonName.Create(request.FirstName, request.LastName);
+        user.PhoneNumber = request.PhoneNumber;
+        user.UpdatedAt = DateTime.UtcNow;
+        user.UpdatedBy = userId;
 
-        if (user.VerificationToken != request.Otp || !user.VerificationTokenExpiry.HasValue || 
-            user.VerificationTokenExpiry.Value < DateTime.UtcNow)
-            return Result<AuthResponse>.Failure("Invalid or expired OTP");
-
-        user.VerifyEmail();
-        await _userManager.UpdateAsync(user);
-        
-        // // Generate tokens
-        // var accessToken = GenerateJwtToken(user);
-        // var refreshToken = Guid.NewGuid().ToString();
-        // user.SetRefreshToken(refreshToken, TimeSpan.FromDays(7));
-
-        // await _userRepository.SaveChangesAsync();
-
-        // var response = new AuthResponse(
-        //     AccessToken: accessToken,
-        //     RefreshToken: refreshToken,
-        //     ExpiresAt: DateTime.UtcNow.AddMinutes(Convert.ToInt32(_configuration["Jwt:ExpiryInMinutes"] ?? "60")),
-        //     User: new UserDto(
-        //         Id: user.Id,
-        //         Email: user.Email ?? string.Empty,
-        //         FirstName: user.Name.FirstName,
-        //         LastName: user.Name.LastName,
-        //         IsEmailVerified: user.EmailConfirmed,
-        //         Roles: new List<string>()
-        //     )
-        // );
-
-        var authResponse = await GenerateAuthResponse(user);
-        return Result<AuthResponse>.Success(authResponse);
-    }
-
-    private string GenerateJwtToken(User user)
-    {
-        var claims = new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim("userId", user.Id.ToString())
-        };
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key not found in configuration")));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        var expires = DateTime.UtcNow.AddMinutes(Convert.ToInt32(_configuration["Jwt:ExpiryInMinutes"] ?? "60"));
-
-        var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
-            claims: claims,
-            expires: expires,
-            signingCredentials: creds
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
-
-    private async Task<AuthResponse> GenerateAuthResponse(User user)
-    {
-        var roles = await _userManager.GetRolesAsync(user);
-        var claims = new List<Claim>
-        {
-            new("userId", user.Id),
-            new(ClaimTypes.Email, user.Email!),
-            new(ClaimTypes.GivenName, user.Name.FirstName),
-            new(ClaimTypes.Surname, user.Name.LastName),
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new(ClaimTypes.Role, string.Join(", ", roles))
-        };
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? 
-            throw new InvalidOperationException("JWT Key not found in configuration")));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        var expires = DateTime.UtcNow.AddMinutes(Convert.ToInt32(_configuration["Jwt:ExpiryInMinutes"] ?? "60"));
-
-        var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
-            claims: claims,
-            expires: expires,
-            signingCredentials: creds
-        );
-
-        var refreshToken = Guid.NewGuid().ToString();
-        user.SetRefreshToken(refreshToken, TimeSpan.FromDays(7));
-        await _userManager.UpdateAsync(user);
-
-        return new AuthResponse(
-            AccessToken: new JwtSecurityTokenHandler().WriteToken(token),
-            RefreshToken: refreshToken,
-            ExpiresAt: expires,
-            User: new UserDto(
-                Id: user.Id,
-                Email: user.Email!,
-                Name: PersonName.Create(user.Name.FirstName, user.Name.LastName),
-                IsEmailVerified: user.EmailConfirmed,
-                Roles: roles.ToList()
-            )
-        );
-    }
-
-    public async Task<Result<string>> ForgotPasswordAsync(ForgotPasswordRequest request)
-    {
-        var user = await _userManager.FindByEmailAsync(request.Email);
-        if (user == null)
-            return Result<string>.Success("If your email is registered, you will receive a password reset link.");
-
-        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-        var resetLink = $"https://yourapp.com/reset-password?email={Uri.EscapeDataString(request.Email)}&token={Uri.EscapeDataString(token)}";
-
-        await _emailService.SendEmailAsync(
-            request.Email,
-            "Reset Your Password",
-            $"Click the following link to reset your password: {resetLink}");
-
-        return Result<string>.Success("Password reset link sent to your email.");
-    }
-
-    public Task<Result<AuthResponse>> GoogleLoginAsync(string email, string googleId, string firstName, string lastName)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<Result<string>> ResetPasswordAsync(ResetPasswordRequest request)
-    {
-        var user = await _userManager.FindByEmailAsync(request.Email);
-        if (user == null)
-            return Result<string>.Failure("Invalid request");
-
-        var result = await _userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
+        var result = await _userManager.UpdateAsync(user);
         if (!result.Succeeded)
             return Result<string>.Failure(result.Errors.First().Description);
 
-        return Result<string>.Success("Password has been reset successfully.");
+        return Result<string>.Success("User updated successfully");
     }
 
-    public async Task<Result<AuthResponse>> LoginAsync(LoginRequest request)
+    public async Task<Result<string>> DeleteUserAsync(string userId)
     {
-        var user = await _userManager.FindByEmailAsync(request.Email);
+        var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
-            return Result<AuthResponse>.Failure("Invalid credentials");
+            return Result<string>.Failure("User not found");
 
-        if (!user.EmailConfirmed)
-            return Result<AuthResponse>.Failure("Please verify your email first");
+        user.IsDeleted = true;
+        user.UpdatedAt = DateTime.UtcNow;
+        user.UpdatedBy = userId;
 
-        var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
+        var result = await _userManager.UpdateAsync(user);
         if (!result.Succeeded)
-        {
-            if (result.IsLockedOut)
-                return Result<AuthResponse>.Failure("Account is locked. Try again later.");
-            
-            return Result<AuthResponse>.Failure("Invalid credentials");
-        }
+            return Result<string>.Failure(result.Errors.First().Description);
 
-        var authResponse = await GenerateAuthResponse(user);
-        return Result<AuthResponse>.Success(authResponse);
+        return Result<string>.Success("User deleted successfully");
+    }
+
+    public async Task<Result<string>> UpdateUserRolesAsync(string userId, IEnumerable<string> roles)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+            return Result<string>.Failure("User not found");
+
+        var currentRoles = await _userManager.GetRolesAsync(user);
+        var result = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+        if (!result.Succeeded)
+            return Result<string>.Failure(result.Errors.First().Description);
+
+        result = await _userManager.AddToRolesAsync(user, roles);
+        if (!result.Succeeded)
+            return Result<string>.Failure(result.Errors.First().Description);
+
+        return Result<string>.Success("User roles updated successfully");
     }
 } 
