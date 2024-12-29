@@ -21,3 +21,12 @@ dotnet run --launch-profile https
 
 # Watch for changes and run the AuthService API project
 dotnet watch --project src/AuthService/AuthService.API/AuthService.API.csproj --launch-profile https
+
+
+# Development mode
+docker-compose up -d
+
+# Production mode
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+docker-compose exec authservice dotnet ef database update
