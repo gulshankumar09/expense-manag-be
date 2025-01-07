@@ -1,175 +1,150 @@
-# AuthService Microservice
+# Authentication Service
 
-## Overview
-The AuthService is a microservice responsible for handling user authentication, authorization, and user management in the Expense Management system. It provides secure user authentication using JWT tokens and supports both email/password and Google OAuth 2.0 authentication methods.
+The Authentication Service is a microservice responsible for user authentication, authorization, and role management in the Expense Splitter application.
 
 ## Features
-- User Authentication (Email/Password)
-- OAuth 2.0 Authentication (Google)
-- JWT Token-based Authentication
-- Role-based Authorization
-- Email Verification using OTP
-- Password Reset Functionality
-- User Management
-- Role Management
 
-## Tech Stack
+### User Management
+- User registration and login
+- Email verification
+- Password reset functionality
+- Google OAuth integration
+- Two-factor authentication support
+- User profile management
+
+### Role Management
+- Role-based access control (RBAC)
+- Hierarchical role structure:
+  - SuperAdmin: Highest level of access, can manage all roles
+  - Admin: Can manage users and assign non-SuperAdmin roles
+  - User: Basic access level
+- Configurable SuperAdmin user limit
+- Role assignment validation and authorization
+
+### Security Features
+- JWT-based authentication
+- Refresh token mechanism
+- Password hashing using BCrypt
+- Email verification
+- Account lockout after failed attempts
+- HTTPS/SSL support
+
+## Technical Stack
+
 - .NET 9.0
-- ASP.NET Core Web API
+- ASP.NET Core Identity
 - Entity Framework Core
-- Microsoft Identity
 - SQL Server
-- JWT Authentication
-- SMTP Email Service
+- Docker support
 
 ## Project Structure
+
 ```
 AuthService/
-├── AuthService.API/             # API Layer
-├── AuthService.Application/     # Application Layer
-├── AuthService.Domain/          # Domain Layer
-└── AuthService.Infrastructure/  # Infrastructure Layer
+├── AuthService.API/          # API endpoints and configuration
+├── AuthService.Application/  # Business logic and services
+├── AuthService.Domain/       # Domain entities and interfaces
+└── AuthService.Infrastructure/ # Data access and external services
 ```
-
-### Clean Architecture
-The project follows Clean Architecture principles with the following layers:
-- **API Layer**: Controllers, Middleware, and API Configuration
-- **Application Layer**: DTOs, Interfaces, Services, and Business Logic
-- **Domain Layer**: Entities and Value Objects
-- **Infrastructure Layer**: Database, External Services, and Repositories
-
-## API Endpoints
-
-### Account Management
-- `POST /api/account/register` - Register a new user
-- `POST /api/account/login` - User login
-- `POST /api/account/verify-otp` - Verify email using OTP
-- `POST /api/account/forgot-password` - Initiate password reset
-- `POST /api/account/reset-password` - Reset password
-
-### Role Management (Admin Only)
-- `POST /api/roles/create` - Create a new role
-- `POST /api/roles/assign` - Assign role to user
-- `GET /api/roles/list` - List all roles
-- `GET /api/roles/user/{userId}` - Get user's roles
-
-## Authentication Flow
-
-### Email/Password Registration
-1. User registers with email/password
-2. System sends OTP to user's email
-3. User verifies email with OTP
-4. User can now login
-
-### Password Reset
-1. User requests password reset
-2. System sends reset link to email
-3. User clicks link and sets new password
-
-### JWT Token
-- Access Token validity: 60 minutes
-- Refresh Token validity: 7 days
-- Token includes user claims (ID, Email, Roles)
 
 ## Configuration
 
-### appsettings.json
+### Environment Variables
+Create a `.env` file in the root directory with the following variables:
+```
+SQL_PASSWORD=your_secure_password
+ASPNETCORE_ENVIRONMENT=Development
+```
+
+### Role Settings
+The role management system can be configured through `appsettings.json`:
 ```json
 {
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=ExpenseSplitter.Auth;Trusted_Connection=True;MultipleActiveResultSets=true"
-  },
-  "Jwt": {
-    "Key": "your_secret_key_here",
-    "Issuer": "http://localhost:5000",
-    "Audience": "http://localhost:5000",
-    "ExpiryInMinutes": 60
-  },
-  "Email": {
-    "Host": "smtp.gmail.com",
-    "Port": 587,
-    "Username": "your_email@gmail.com",
-    "Password": "your_app_specific_password",
-    "EnableSsl": true,
-    "FromEmail": "your_email@gmail.com",
-    "FromName": "Expense Manager"
-  },
-  "Google": {
-    "ClientId": "your_google_client_id",
-    "ClientSecret": "your_google_client_secret"
+  "RoleSettings": {
+    "MaxSuperAdminUsers": 1
   }
 }
 ```
 
-## Security Features
-- Password Requirements:
-  - Minimum length: 8 characters
-  - Requires uppercase letter
-  - Requires lowercase letter
-  - Requires digit
-  - Requires special character
+## API Endpoints
 
-- Account Security:
-  - Email verification required
-  - Account lockout after 5 failed attempts
-  - Lockout duration: 5 minutes
-  - Rate limiting: 10 requests per minute
+### Authentication
+- POST `/api/auth/register` - Register a new user
+- POST `/api/auth/login` - User login
+- POST `/api/auth/refresh-token` - Refresh JWT token
+- POST `/api/auth/verify-email` - Verify email address
+- POST `/api/auth/forgot-password` - Initiate password reset
+- POST `/api/auth/reset-password` - Reset password
+- POST `/api/auth/google-login` - Google OAuth login
 
-## Database
-- Uses SQL Server with Entity Framework Core
-- Identity tables for user management
-- Custom tables for additional features
-- Soft delete support
-- Audit trails (Created/Updated timestamps)
+### Role Management
+- POST `/api/roles/create` - Create a new role (SuperAdmin only)
+- POST `/api/roles/assign` - Assign role to user (SuperAdmin/Admin)
+- GET `/api/roles/list` - List all roles
+- GET `/api/roles/user/{userId}` - Get user's roles
+- POST `/api/roles/superadmin-limit` - Update SuperAdmin user limit
 
-## Getting Started
+## Setup and Installation
 
-### Prerequisites
-- .NET 9.0 SDK
-- SQL Server
-- SMTP Server access (for email functionality)
+1. Prerequisites:
+   - Docker and Docker Compose
+   - .NET 9.0 SDK (for development)
 
-### Setup
-1. Clone the repository
-2. Update connection string in appsettings.json
-3. Run migrations:
+2. Clone the repository:
    ```bash
-   dotnet ef database update --project src/AuthService/AuthService.Infrastructure --startup-project src/AuthService/AuthService.API
-   ```
-4. Configure email settings in appsettings.json
-5. Run the application:
-   ```bash
-   dotnet run --project src/AuthService/AuthService.API
+   git clone <repository-url>
+   cd expense-manag-be
    ```
 
-### Default Roles
-The system automatically creates two default roles on startup:
-- Admin
-- User
+3. Create and configure the `.env` file:
+   ```bash
+   cp .env.example .env
+   # Edit .env with your settings
+   ```
 
-## Error Handling
-- Uses Result pattern for consistent error responses
-- Structured error messages
-- Proper HTTP status codes
-- Detailed logging with correlation IDs
+4. Start the services:
+   ```bash
+   docker compose up --build
+   ```
 
-## Rate Limiting
-- Global rate limit: 10 requests per minute
-- Custom rate limits for specific endpoints
-- IP-based rate limiting
+5. The service will be available at:
+   - HTTP: http://localhost:5000
+   - HTTPS: https://localhost:5001
+   - Swagger UI: https://localhost:5001/swagger
 
-## Dependencies
-```xml
-<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.0" />
-<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
-<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
-<PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+## Development
+
+### Database Migrations
+To create a new migration:
+```bash
+dotnet ef migrations add MigrationName --project src/AuthService/AuthService.Infrastructure --startup-project src/AuthService/AuthService.API
 ```
 
+To apply migrations:
+```bash
+dotnet ef database update --project src/AuthService/AuthService.Infrastructure --startup-project src/AuthService/AuthService.API
+```
+
+### Running Tests
+```bash
+dotnet test src/AuthService/AuthService.Tests
+```
+
+## Security Considerations
+
+- Always use HTTPS in production
+- Keep the JWT secret key secure
+- Regularly rotate refresh tokens
+- Monitor failed login attempts
+- Implement rate limiting for API endpoints
+- Keep dependencies up to date
+
 ## Contributing
+
 1. Create a feature branch
 2. Make your changes
 3. Submit a pull request
 
 ## License
-This project is licensed under the MIT License. 
+
+[Your License] 

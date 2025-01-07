@@ -23,6 +23,13 @@ public interface IRoleService
     Task<Result<string>> AssignRoleAsync(AssignRoleRequest request);
 
     /// <summary>
+    /// Updates the maximum number of allowed SuperAdmin users
+    /// </summary>
+    /// <param name="newLimit">The new maximum limit for SuperAdmin users</param>
+    /// <returns>A Result containing a success message or error details</returns>
+    Task<Result<string>> UpdateSuperAdminLimitAsync(int newLimit);
+
+    /// <summary>
     /// Retrieves a list of all available roles in the system
     /// </summary>
     /// <returns>A Result containing the list of role names</returns>

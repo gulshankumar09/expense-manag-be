@@ -1,7 +1,5 @@
 # Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP.NET Core service.
 
-version: '3.8'
-
 services:
   # AuthService API
   authservice:
@@ -10,44 +8,35 @@ services:
       dockerfile: src/AuthService/AuthService.API/Dockerfile
     container_name: authservice
     ports:
-      - "5111:5111"
-      - "5001:5001"
+      - "5002:5000"
+      - "5003:5001"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:5001;http://+:5111
+      - ASPNETCORE_URLS=https://+:5001;http://+:5000
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
       - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=ExpenseSplitter.Auth;User Id=sa;Password=${SQL_PASSWORD};TrustServerCertificate=True;
-      - Jwt__Key=${JWT_SECRET_KEY}
-      - Jwt__Issuer=https://localhost:5001
-      - Jwt__Audience=https://localhost:5001
-      - Email__Host=${SMTP_HOST}
-      - Email__Port=${SMTP_PORT}
-      - Email__Username=${SMTP_USERNAME}
-      - Email__Password=${SMTP_PASSWORD}
-      - Google__ClientId=${GOOGLE_CLIENT_ID}
-      - Google__ClientSecret=${GOOGLE_CLIENT_SECRET}
+      - ConnectionStrings__DefaultConnection=Server=authservice-db;Database=AuthServiceDB;User Id=sa;Password=${SQL_PASSWORD};TrustServerCertificate=True;
     volumes:
       - ${CERT_PATH}:/https:ro
-    depends_on:
-      sqlserver:
-        condition: service_healthy
     networks:
       - expense-network
+    depends_on:
+      - authservice-db
     healthcheck:
-      test: ["CMD", "curl", "-f", "-k", "https://localhost:5001/health"]
+      test: curl -f -k http://localhost:5000/health || curl -f -k https://localhost:5001/health
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
 
   # SQL Server
-  sqlserver:
+  authservice-db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: authservice-db
     environment:
       - ACCEPT_EULA=Y
       - MSSQL_SA_PASSWORD=${SQL_PASSWORD}
+      - TZ=UTC
     ports:
       - "1433:1433"
     volumes:
@@ -60,20 +49,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
-
-  # Redis for caching (optional)
-  redis:
-    image: redis:alpine
-    container_name: authservice-redis
-    ports:
-      - "6379:6379"
-    networks:
-      - expense-network
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
 
 volumes:
   sqlserver_data:

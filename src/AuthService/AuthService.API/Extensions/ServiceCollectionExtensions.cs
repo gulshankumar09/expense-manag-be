@@ -27,7 +27,10 @@ public static class ServiceCollectionExtensions
             
             options.UseSqlServer(
                 configuration.GetConnectionString("DefaultConnection"),
-                b => b.MigrationsAssembly(typeof(AuthDbContext).Assembly.FullName));
+                b => {
+                    b.MigrationsAssembly(typeof(AuthDbContext).Assembly.FullName);
+                    b.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
+                });
 
             if (interceptor != null)
             {
@@ -59,7 +62,8 @@ public static class ServiceCollectionExtensions
             options.SignIn.RequireConfirmedEmail = true;
         })
         .AddEntityFrameworkStores<AuthDbContext>()
-        .AddDefaultTokenProviders();
+        .AddDefaultTokenProviders()
+        .AddSignInManager();
 
         return services;
     }
@@ -72,6 +76,9 @@ public static class ServiceCollectionExtensions
         // Configure Email Settings
         services.Configure<EmailSettings>(configuration.GetSection("Email"));
 
+        // Configure Role Settings
+        services.Configure<RoleSettings>(options => options.MaxSuperAdminUsers = 1);
+
         // Register Infrastructure Services
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IEmailService, EmailService>();
@@ -82,6 +89,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IOtpService, OtpService>();
         services.AddScoped<IRoleService, RoleService>();
+        services.AddScoped<IAuthService, AuthService.Application.Services.AuthService>();
 
         // Add HTTP client for external services
         services.AddHttpClient();
@@ -123,5 +131,29 @@ public static class ServiceCollectionExtensions
         });
 
         return services;
+    }
+
+    public static async Task SeedDatabase(IServiceProvider serviceProvider)
+    {
+        using var scope = serviceProvider.CreateScope();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+
+        // Create SuperAdmin role if it doesn't exist
+        if (!await roleManager.RoleExistsAsync("SuperAdmin"))
+        {
+            await roleManager.CreateAsync(new IdentityRole("SuperAdmin"));
+        }
+
+        // Find the admin user
+        var adminUser = await userManager.FindByEmailAsync("admin@expensesplitter.com");
+        if (adminUser != null)
+        {
+            // Add SuperAdmin role to admin user if they don't have it
+            if (!await userManager.IsInRoleAsync(adminUser, "SuperAdmin"))
+            {
+                await userManager.AddToRoleAsync(adminUser, "SuperAdmin");
+            }
+        }
     }
 } 

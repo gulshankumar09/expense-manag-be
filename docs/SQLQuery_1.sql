@@ -37,10 +37,11 @@ GO
 
 USE AuthServiceDB;
 
-EXEC sp_help AsoNetUsers;
+EXEC sp_help AspNetUsers;
 
 
 SELECT * FROM AspNetUsers
+SELECT * from aspnetroles
 
 
 

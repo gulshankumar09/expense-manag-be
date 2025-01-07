@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AuthService.Infrastructure.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20241221105210_AddIdentitySupport")]
-    partial class AddIdentitySupport
+    [Migration("20250107214043_AddSuperAdminRole")]
+    partial class AddSuperAdminRole
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

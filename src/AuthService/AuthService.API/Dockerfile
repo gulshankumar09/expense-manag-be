@@ -1,76 +1,56 @@
-# This stage is used when running from VS in fast mode (Default for Debug configuration)
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-
-# <-- This stage is used to build the service project -->
-# Specify platform for multi-arch support
+# Build stage
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG TARGETARCH
-ARG BUILD_CONFIGURATION=Release
-
-# Set working directory
 WORKDIR /src
 
-# Copy solution and project files first to leverage Docker cache
-COPY ["src/AuthService/AuthService.API/AuthService.API.csproj", "src/AuthService/AuthService.API/"]
-COPY ["src/AuthService/AuthService.Application/AuthService.Application.csproj", "src/AuthService/AuthService.Application/"]
-COPY ["src/AuthService/AuthService.Domain/AuthService.Domain.csproj", "src/AuthService/AuthService.Domain/"]
-COPY ["src/AuthService/AuthService.Infrastructure/AuthService.Infrastructure.csproj", "src/AuthService/AuthService.Infrastructure/"]
-COPY ["src/SharedLibrary/SharedLibrary.csproj", "src/SharedLibrary/"]
+# Copy solution files
+COPY ["src/AuthService/AuthService.API/AuthService.API.csproj", "AuthService/AuthService.API/"]
+COPY ["src/AuthService/AuthService.Application/AuthService.Application.csproj", "AuthService/AuthService.Application/"]
+COPY ["src/AuthService/AuthService.Domain/AuthService.Domain.csproj", "AuthService/AuthService.Domain/"]
+COPY ["src/AuthService/AuthService.Infrastructure/AuthService.Infrastructure.csproj", "AuthService/AuthService.Infrastructure/"]
+COPY ["src/SharedLibrary/SharedLibrary.csproj", "SharedLibrary/"]
 
-# Restore NuGet packages
-RUN dotnet restore "src/AuthService/AuthService.API/AuthService.API.csproj" -a $TARGETARCH
+# Restore dependencies
+RUN dotnet restore "AuthService/AuthService.API/AuthService.API.csproj" -a $TARGETARCH
 
-# Copy the rest of the source code
-COPY . .
+# Copy the source code
+COPY src/ .
 
-# <-- This stage is used to publish the service project to be copied to the final stage -->
-# Build the application
-WORKDIR "/src/src/AuthService/AuthService.API"
-RUN dotnet build "AuthService.API.csproj" -c $BUILD_CONFIGURATION -o /app/build -a $TARGETARCH
+# Build and publish
+WORKDIR "/src/AuthService/AuthService.API"
+RUN dotnet publish "AuthService.API.csproj" -c Release -o /app/publish /p:UseAppHost=false -a $TARGETARCH
 
-# Publish the application
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "AuthService.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false -a $TARGETARCH
-
-
-
-# <-- This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration) -->
-# Final stage/image
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
 
+# Add labels
+LABEL maintainer="gulshankumar.official2000@gmail.com" \
+      project="AuthService" \
+      version="1.0.0"
 
-# Add labels for better maintainability
-LABEL maintainer="gulshankumar.official2000@example.com"
-LABEL project="AuthService"
-LABEL version="1.0.0"
+# Setup user and directories
+RUN groupadd -r appgroup && \
+    useradd -r -g appgroup appuser && \
+    mkdir -p /https && \
+    chown -R appuser:appgroup /app /https && \
+    chmod 700 /https && \
+    apt-get update && \
+    apt-get install -y curl && \
+    rm -rf /var/lib/apt/lists/*
 
-# Install curl without specifying a version
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl \
-    && rm -rf /var/lib/apt/lists/* \
-    && adduser --disabled-password --gecos "" appuser \
-    && chown -R appuser /app
-
-# Create directory for SSL certificate with proper permissions
-RUN mkdir -p /https \
-    && chown -R appuser /https \
-    && chmod 700 /https
+# Copy published files
+COPY --from=build --chown=appuser:appgroup /app/publish/ ./
 
 # Switch to non-root user
 USER appuser
-
-# Copy published files from publish stage
-COPY --from=publish --chown=appuser:appuser /app/publish .
 
 # Configure environment variables
 ENV ASPNETCORE_URLS="https://+:5001;http://+:5000" \
     ASPNETCORE_ENVIRONMENT=Production \
     ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx \
-    # Don't set the certificate password here, it should be passed through docker-compose
     DOTNET_RUNNING_IN_CONTAINER=true \
-    DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+    TZ=UTC
 
 # Expose ports
 EXPOSE 5000
@@ -78,8 +58,7 @@ EXPOSE 5001
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f -k https://localhost:5001/health || exit 1
+    CMD curl -f -k http://localhost:5000/health || curl -f -k https://localhost:5001/health
 
 # Set the entry point
 ENTRYPOINT ["dotnet", "AuthService.API.dll"]
-
