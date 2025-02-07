@@ -37,13 +37,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionService.Infrastr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedLibrary", "src\SharedLibrary\SharedLibrary.csproj", "{72DDC245-DE2D-4DE2-BD0D-8FC5B483B231}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{83883A63-3B18-4144-9210-B459C39D28D7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{4F48E955-43DB-42AC-B9A0-6BD1FBF92E00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -98,6 +97,13 @@ Global
 		{72DDC245-DE2D-4DE2-BD0D-8FC5B483B231}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72DDC245-DE2D-4DE2-BD0D-8FC5B483B231}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72DDC245-DE2D-4DE2-BD0D-8FC5B483B231}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83883A63-3B18-4144-9210-B459C39D28D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83883A63-3B18-4144-9210-B459C39D28D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83883A63-3B18-4144-9210-B459C39D28D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83883A63-3B18-4144-9210-B459C39D28D7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{895AAA90-00C8-4FF4-B9DA-34A93F0DD16F} = {44877087-2FED-411A-BD0D-2D2B1D920F48}

@@ -1,35 +1,18 @@
-# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP.NET Core service.
-
 services:
-  # AuthService API
-  authservice:
+  authserviceapi:
+    image: ${DOCKER_REGISTRY-}authserviceapi
     build:
       context: .
       dockerfile: src/AuthService/AuthService.API/Dockerfile
-    container_name: authservice
-    ports:
-      - "5002:5000"
-      - "5003:5001"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:5001;http://+:5000
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
-      - ConnectionStrings__DefaultConnection=Server=expense-db;Database=AuthServiceDB;User Id=sa;Password=${SQL_PASSWORD};TrustServerCertificate=True;
-    volumes:
-      - ${CERT_PATH}:/https:ro
+    container_name: authserviceapi
     networks:
       - expense-network
-    depends_on:
-      - expense-db
     healthcheck:
-      test: curl -f -k http://localhost:5000/health || curl -f -k https://localhost:5001/health
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+        test: ["CMD", "curl", "-f", "https://localhost:8081/health"]
+        interval: 1m30s
+        timeout: 10s
+        retries: 3
 
-  # Common SQL Server for all services
   expense-db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: expense-db
