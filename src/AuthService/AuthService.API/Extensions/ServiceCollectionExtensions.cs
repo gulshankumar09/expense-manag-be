@@ -1,16 +1,16 @@
+using AuthService.Application.Configuration;
 using AuthService.Application.Interfaces;
 using AuthService.Application.Services;
+using AuthService.Domain.Entities;
 using AuthService.Infrastructure.Persistence;
 using AuthService.Infrastructure.Repositories;
 using AuthService.Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using SharedLibrary.Infrastructure.Interceptors;
 using SharedLibrary.Services;
-using AuthService.Application.Configuration;
-using Microsoft.AspNetCore.Identity;
-using AuthService.Domain.Entities;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 namespace AuthService.API.Extensions;
@@ -27,11 +27,7 @@ public static class ServiceCollectionExtensions
 
             options.UseSqlServer(
                 configuration.GetConnectionString("DefaultConnection"),
-                b =>
-                {
-                    b.MigrationsAssembly(typeof(AuthDbContext).Assembly.FullName);
-                    b.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
-                });
+                b => b.MigrationsAssembly(typeof(AuthDbContext).Assembly.FullName));
 
             if (interceptor != null)
             {
@@ -63,8 +59,7 @@ public static class ServiceCollectionExtensions
             options.SignIn.RequireConfirmedEmail = true;
         })
         .AddEntityFrameworkStores<AuthDbContext>()
-        .AddDefaultTokenProviders()
-        .AddSignInManager();
+        .AddDefaultTokenProviders();
 
         return services;
     }
@@ -77,21 +72,16 @@ public static class ServiceCollectionExtensions
         // Configure Email Settings
         services.Configure<EmailSettings>(configuration.GetSection("Email"));
 
-        // Configure Role Settings
-        services.Configure<RoleConfiguration>(configuration.GetSection("Role"));
-
         // Register Infrastructure Services
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IGoogleAuthService, GoogleAuthService>();
         services.AddScoped<IAuditService, AuditService>();
-        services.AddScoped<IRoleSettingsRepository, RoleSettingsRepository>();
 
         // Register Application Services
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IOtpService, OtpService>();
         services.AddScoped<IRoleService, RoleService>();
-        services.AddScoped<IAuthService, AuthService.Application.Services.AuthService>();
 
         // Add HTTP client for external services
         services.AddHttpClient();
@@ -133,29 +123,5 @@ public static class ServiceCollectionExtensions
         });
 
         return services;
-    }
-
-    public static async Task SeedDatabase(IServiceProvider serviceProvider)
-    {
-        using var scope = serviceProvider.CreateScope();
-        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-
-        // Create SuperAdmin role if it doesn't exist
-        if (!await roleManager.RoleExistsAsync("SuperAdmin"))
-        {
-            await roleManager.CreateAsync(new IdentityRole("SuperAdmin"));
-        }
-
-        // Find the admin user
-        var adminUser = await userManager.FindByEmailAsync("admin@expensesplitter.com");
-        if (adminUser != null)
-        {
-            // Add SuperAdmin role to admin user if they don't have it
-            if (!await userManager.IsInRoleAsync(adminUser, "SuperAdmin"))
-            {
-                await userManager.AddToRoleAsync(adminUser, "SuperAdmin");
-            }
-        }
     }
 }

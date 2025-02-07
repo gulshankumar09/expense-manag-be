@@ -1,9 +1,9 @@
+using AuthService.Domain.Entities;
+using AuthService.Domain.ValueObjects;
 using AuthService.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
-using AuthService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Polly;
-using AuthService.Domain.ValueObjects;
 
 namespace AuthService.API.Extensions;
 

@@ -1,8 +1,8 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using SharedLibrary.Models;
-using AuthService.Application.Interfaces;
 using AuthService.Application.DTOs;
+using AuthService.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SharedLibrary.Models;
 
 namespace AuthService.API.Controllers;
 

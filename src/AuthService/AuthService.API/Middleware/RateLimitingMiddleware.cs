@@ -1,5 +1,5 @@
-using System.Collections.Concurrent;
 using AuthService.API.Models;
+using System.Collections.Concurrent;
 
 namespace AuthService.API.Middleware
 {
@@ -35,4 +35,4 @@ namespace AuthService.API.Middleware
             await _next(context);
         }
     }
-} 
+}
