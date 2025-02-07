@@ -1,4 +1,6 @@
 using AuthService.API.Extensions;
+using AuthService.Infrastructure.Persistence;
+using SharedLibrary.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
@@ -7,9 +9,20 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
 
-// Configure Swagger
+// Add CORS
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddDevelopmentCors();
+}
+else
+{
+    var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+    builder.Services.AddProductionCors(allowedOrigins ?? Array.Empty<string>());
+}
+
+// Add other services
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
@@ -79,7 +92,9 @@ await app.InitializeDatabaseAsync();
 
 app.UseHttpsRedirection();
 
-// Add authentication & authorization
+// Add CORS middleware before authentication and authorization
+app.UseCors(app.Environment.IsDevelopment() ? "Development" : "Production");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
