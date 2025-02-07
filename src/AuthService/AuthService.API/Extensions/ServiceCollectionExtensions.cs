@@ -24,10 +24,11 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<AuthDbContext>((sp, options) =>
         {
             var interceptor = sp.GetService<AuditableEntitySaveChangesInterceptor>();
-            
+
             options.UseSqlServer(
                 configuration.GetConnectionString("DefaultConnection"),
-                b => {
+                b =>
+                {
                     b.MigrationsAssembly(typeof(AuthDbContext).Assembly.FullName);
                     b.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
                 });
@@ -77,13 +78,14 @@ public static class ServiceCollectionExtensions
         services.Configure<EmailSettings>(configuration.GetSection("Email"));
 
         // Configure Role Settings
-        services.Configure<RoleSettings>(options => options.MaxSuperAdminUsers = 1);
+        services.Configure<RoleConfiguration>(configuration.GetSection("Role"));
 
         // Register Infrastructure Services
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IGoogleAuthService, GoogleAuthService>();
         services.AddScoped<IAuditService, AuditService>();
+        services.AddScoped<IRoleSettingsRepository, RoleSettingsRepository>();
 
         // Register Application Services
         services.AddScoped<IUserService, UserService>();
@@ -100,7 +102,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddAuthenticationServices(this IServiceCollection services, IConfiguration configuration)
     {
         var jwtKey = configuration["Jwt:Key"] ?? throw new ArgumentNullException("Jwt:Key not found in configuration");
-        
+
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -156,4 +158,4 @@ public static class ServiceCollectionExtensions
             }
         }
     }
-} 
+}

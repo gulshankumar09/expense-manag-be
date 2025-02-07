@@ -20,8 +20,9 @@ public class RoleService : IRoleService
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly UserManager<User> _userManager;
     private readonly ILogger<RoleService> _logger;
-    private readonly RoleSettings _roleSettings;
+    private readonly RoleConfiguration _roleConfig;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IRoleSettingsRepository _roleSettingsRepository;
 
     /// <summary>
     /// Initializes a new instance of the RoleService
@@ -29,20 +30,23 @@ public class RoleService : IRoleService
     /// <param name="roleManager">The ASP.NET Identity role manager</param>
     /// <param name="userManager">The ASP.NET Identity user manager</param>
     /// <param name="logger">The logger instance</param>
-    /// <param name="roleSettings">The role settings</param>
+    /// <param name="roleConfig">The role configuration</param>
     /// <param name="httpContextAccessor">The HTTP context accessor</param>
+    /// <param name="roleSettingsRepository">The role settings repository</param>
     public RoleService(
         RoleManager<IdentityRole> roleManager,
         UserManager<User> userManager,
         ILogger<RoleService> logger,
-        IOptions<RoleSettings> roleSettings,
-        IHttpContextAccessor httpContextAccessor)
+        IOptions<RoleConfiguration> roleConfig,
+        IHttpContextAccessor httpContextAccessor,
+        IRoleSettingsRepository roleSettingsRepository)
     {
         _roleManager = roleManager;
         _userManager = userManager;
         _logger = logger;
-        _roleSettings = roleSettings.Value;
+        _roleConfig = roleConfig.Value;
         _httpContextAccessor = httpContextAccessor;
+        _roleSettingsRepository = roleSettingsRepository;
     }
 
     private async Task<bool> IsCurrentUserAuthorizedForRole(string roleToAssign)
@@ -112,9 +116,9 @@ public class RoleService : IRoleService
             if (request.RoleName == "SuperAdmin")
             {
                 var currentSuperAdmins = await _userManager.GetUsersInRoleAsync("SuperAdmin");
-                if (currentSuperAdmins.Count >= _roleSettings.MaxSuperAdminUsers && !currentSuperAdmins.Any(u => u.Id == request.UserId))
+                if (currentSuperAdmins.Count >= _roleConfig.MaxSuperAdminUsers && !currentSuperAdmins.Any(u => u.Id == request.UserId))
                 {
-                    return Result<string>.Failure($"Cannot assign SuperAdmin role. Maximum limit of {_roleSettings.MaxSuperAdminUsers} SuperAdmin user(s) has been reached.");
+                    return Result<string>.Failure($"Cannot assign SuperAdmin role. Maximum limit of {_roleConfig.MaxSuperAdminUsers} SuperAdmin user(s) has been reached.");
                 }
             }
 
@@ -158,7 +162,14 @@ public class RoleService : IRoleService
             if (currentSuperAdminCount > newLimit)
                 return Result<string>.Failure($"Cannot update limit to {newLimit} as there are already {currentSuperAdminCount} SuperAdmin users.");
 
-            _roleSettings.MaxSuperAdminUsers = newLimit;
+            // Update in-memory configuration
+            _roleConfig.MaxSuperAdminUsers = newLimit;
+
+            // Update database settings
+            var settings = await _roleSettingsRepository.GetSettingsAsync();
+            settings.MaxSuperAdminUsers = newLimit;
+            await _roleSettingsRepository.UpdateSettingsAsync(settings);
+
             _logger.LogInformation("SuperAdmin user limit updated to {NewLimit}", newLimit);
             return Result<string>.Success($"SuperAdmin user limit updated to {newLimit}");
         }
@@ -202,4 +213,4 @@ public class RoleService : IRoleService
             return Result<IEnumerable<string>>.Failure("An error occurred while getting user roles");
         }
     }
-} 
+}

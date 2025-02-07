@@ -18,17 +18,17 @@ public static class DatabaseInitializationExtensions
             {
                 var context = services.GetRequiredService<AuthDbContext>();
                 var logger = services.GetRequiredService<ILogger<AuthDbContext>>();
-                
+
                 logger.LogInformation("Waiting for database to be ready...");
-                
+
                 // Create a retry policy for database operations
                 var policy = Policy
                     .Handle<Exception>()
-                    .WaitAndRetryAsync(10, retryAttempt => 
+                    .WaitAndRetryAsync(10, retryAttempt =>
                         TimeSpan.FromSeconds(Math.Min(Math.Pow(2, retryAttempt), 30)), // exponential backoff
                         (exception, timeSpan, retryCount, context) =>
                         {
-                            logger.LogWarning(exception, 
+                            logger.LogWarning(exception,
                                 "Failed to connect to database. Retry attempt {RetryCount}. Waiting {TimeSpan} seconds",
                                 retryCount,
                                 timeSpan.TotalSeconds);
@@ -56,7 +56,7 @@ public static class DatabaseInitializationExtensions
 
                     // Create default admin user
                     var userManager = services.GetRequiredService<UserManager<User>>();
-                    var adminEmail = "admin@expensemanager.com";
+                    var adminEmail = "admin@expensesplitter.com";
                     var adminUser = await userManager.FindByEmailAsync(adminEmail);
 
                     if (adminUser == null)
@@ -81,7 +81,7 @@ public static class DatabaseInitializationExtensions
                         }
                         else
                         {
-                            logger.LogError("Failed to create admin user: {Errors}", 
+                            logger.LogError("Failed to create admin user: {Errors}",
                                 string.Join(", ", result.Errors.Select(e => e.Description)));
                         }
                     }
@@ -106,4 +106,4 @@ public static class DatabaseInitializationExtensions
             }
         }
     }
-} 
+}

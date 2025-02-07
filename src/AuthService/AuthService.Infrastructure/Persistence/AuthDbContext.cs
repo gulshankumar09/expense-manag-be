@@ -9,6 +9,8 @@ public class AuthDbContext : IdentityDbContext<User>
 {
     private readonly AuditableEntitySaveChangesInterceptor _auditableEntitySaveChangesInterceptor;
 
+    public DbSet<RoleSettings> RoleSettings { get; set; }
+
     public AuthDbContext(
         DbContextOptions<AuthDbContext> options,
         AuditableEntitySaveChangesInterceptor auditableEntitySaveChangesInterceptor)
@@ -28,4 +30,4 @@ public class AuthDbContext : IdentityDbContext<User>
         optionsBuilder.AddInterceptors(_auditableEntitySaveChangesInterceptor);
         base.OnConfiguring(optionsBuilder);
     }
-} 
+}
