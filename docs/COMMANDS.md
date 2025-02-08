@@ -14,13 +14,21 @@ dotnet ef migrations add AddIdentitySupport --project src/AuthService/AuthServic
 dotnet ef database update --startup-project ../AuthService.API
 
 # Update the database for AuthService with specific project
+```C#
 dotnet ef database update --startup-project src/AuthService/AuthService.API
 
+dotnet ef database update --project src/AuthService/AuthService.Infrastructure/AuthService.Infrastructure.csproj --startup-project src/AuthService/AuthService.API/AuthService.API.csproj
+```
+
 # Run the application with HTTPS launch profile
+```C#
 dotnet run --launch-profile https
+```
 
 # Watch for changes and run the AuthService API project
+```C#
 dotnet watch --project src/AuthService/AuthService.API/AuthService.API.csproj --launch-profile https
+```
 
 
 # Development mode

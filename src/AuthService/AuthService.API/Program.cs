@@ -9,11 +9,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add Core Services
+// Add Core Services in correct order
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddIdentityServices();
-builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddAuthenticationServices(builder.Configuration);
+builder.Services.AddApplicationServices(builder.Configuration);
 
 // Add Rate Limiting
 builder.Services.AddRateLimiter(options =>
@@ -49,19 +49,7 @@ app.UseRateLimiter();
 
 app.MapControllers();
 
-// Create default roles
-using (var scope = app.Services.CreateScope())
-{
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    var roles = new[] { "Admin", "User" };
-
-    foreach (var role in roles)
-    {
-        if (!await roleManager.RoleExistsAsync(role))
-        {
-            await roleManager.CreateAsync(new IdentityRole(role));
-        }
-    }
-}
+// Initialize the database and create default roles and users
+await app.InitializeDatabaseAsync();
 
 app.Run();

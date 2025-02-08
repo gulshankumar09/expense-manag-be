@@ -30,18 +30,17 @@ LABEL maintainer="gulshankumar.official2000@gmail.com" \
       version="1.0.0"
 
 # Setup user and directories
-#RUN groupadd -r appgroup && \
-    #useradd -r -g appgroup appuser && \
-    #mkdir -p /https && \
-    #chown -R appuser:appgroup /app /https && \
-    #chmod 700 /https && \
-    #apt-get update && \
-    #apt-get install -y curl && \
-    #rm -rf /var/lib/apt/lists/*
+RUN groupadd -r appgroup && \
+    useradd -r -g appgroup appuser && \
+    mkdir -p /https && \
+    chown -R appuser:appgroup /app /https && \
+    chmod 700 /https && \
+    apt-get update && \
+    apt-get install -y curl && \
+    rm -rf /var/lib/apt/lists/*
 
 USER root
 RUN apt-get update && apt-get install -y curl
-USER $APP_UID
 
 # Copy published files
 COPY --from=build --chown=appuser:appgroup /app/publish/ ./

@@ -8,17 +8,17 @@ services:
     networks:
       - expense-network
     healthcheck:
-        test: ["CMD", "curl", "-f", "https://localhost:8081/health"]
-        interval: 1m30s
-        timeout: 10s
-        retries: 3
+      test: ["CMD", "curl", "-f", "https://localhost:8081/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
 
   expense-db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: expense-db
     environment:
       - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=${SQL_PASSWORD}
+      - MSSQL_SA_PASSWORD=Root123#
       - TZ=UTC
     ports:
       - "1433:1433"
@@ -27,7 +27,7 @@ services:
     networks:
       - expense-network
     healthcheck:
-      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "${SQL_PASSWORD}" -Q "SELECT 1" -b -o /dev/null
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "Root123#" -Q "SELECT 1" -b -o /dev/null
       interval: 10s
       timeout: 5s
       retries: 5
