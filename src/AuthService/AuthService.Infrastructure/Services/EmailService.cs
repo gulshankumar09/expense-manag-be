@@ -1,9 +1,9 @@
-using AuthService.Application.Interfaces;
 using AuthService.Application.Configuration;
+using AuthService.Application.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Net.Mail;
 using System.Net;
+using System.Net.Mail;
 
 namespace AuthService.Infrastructure.Services;
 
@@ -42,4 +42,4 @@ public class EmailService : IEmailService
             throw;
         }
     }
-} 
+}

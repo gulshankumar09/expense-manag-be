@@ -27,4 +27,4 @@ public class ExpenseService
         await _expenseRepository.AddAsync(expense);
         await _expenseRepository.SaveChangesAsync();
     }
-} 
+}

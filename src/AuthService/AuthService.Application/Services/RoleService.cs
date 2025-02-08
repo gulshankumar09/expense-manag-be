@@ -1,13 +1,12 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Http;
+using AuthService.Application.Configuration;
 using AuthService.Application.DTOs;
 using AuthService.Application.Interfaces;
 using AuthService.Domain.Entities;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using SharedLibrary.Models;
-using AuthService.Application.Configuration;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace AuthService.Application.Services;

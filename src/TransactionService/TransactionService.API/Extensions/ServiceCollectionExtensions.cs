@@ -1,5 +1,5 @@
-using TransactionService.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using TransactionService.Infrastructure.Persistence;
 
 namespace TransactionService.API.Extensions;
 
@@ -14,4 +14,4 @@ public static class ServiceCollectionExtensions
 
         return services;
     }
-} 
+}

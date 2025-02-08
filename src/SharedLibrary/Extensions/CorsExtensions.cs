@@ -84,8 +84,8 @@ public static class CorsExtensions
         var developmentSettings = new CorsSettings
         {
             PolicyName = "Development",
-            AllowedOrigins = new[] { 
-                "http://localhost:3000", 
+            AllowedOrigins = new[] {
+                "http://localhost:3000",
                 "https://localhost:3000",
                 "http://localhost:5173",
                 "https://localhost:5173",
@@ -118,4 +118,4 @@ public static class CorsExtensions
 
         return services.AddCustomCors(productionSettings);
     }
-} 
+}

@@ -8,4 +8,4 @@ public interface IExpenseRepository
     Task<IEnumerable<Expense>> GetAllAsync();
     Task AddAsync(Expense expense);
     Task SaveChangesAsync();
-} 
+}

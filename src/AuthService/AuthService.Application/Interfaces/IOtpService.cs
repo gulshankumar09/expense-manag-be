@@ -1,5 +1,3 @@
-using System;
-
 namespace AuthService.Application.Interfaces;
 
 /// <summary>

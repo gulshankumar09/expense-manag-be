@@ -34,4 +34,4 @@ public class CorsSettings
     /// Maximum age of preflight requests in seconds
     /// </summary>
     public int PreflightMaxAge { get; set; } = 600; // 10 minutes
-} 
+}

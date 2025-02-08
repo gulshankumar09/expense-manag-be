@@ -17,4 +17,4 @@ public class ExpenseDbContext : DbContext
         modelBuilder.ApplyConfiguration(new ExpenseConfiguration());
         modelBuilder.ApplyConfiguration(new ExpenseSplitConfiguration());
     }
-} 
+}

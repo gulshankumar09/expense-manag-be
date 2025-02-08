@@ -67,4 +67,4 @@ public interface IAuthService
     /// <param name="request">The current and new password details</param>
     /// <returns>A Result containing a success message or error details</returns>
     Task<Result<string>> ChangePasswordAsync(string userId, ChangePasswordRequest request);
-} 
+}

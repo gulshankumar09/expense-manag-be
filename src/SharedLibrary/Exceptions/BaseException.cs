@@ -8,4 +8,4 @@ public class BaseException : Exception
     {
         Code = code;
     }
-} 
+}

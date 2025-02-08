@@ -1,6 +1,4 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SharedLibrary.Domain;
 using SharedLibrary.Infrastructure.Configurations;
 using TransactionService.Domain.Entities;
 
@@ -30,4 +28,4 @@ public class TransactionConfiguration : BaseEntityConfiguration<Transaction>
             .IsRequired()
             .HasConversion<string>();
     }
-} 
+}

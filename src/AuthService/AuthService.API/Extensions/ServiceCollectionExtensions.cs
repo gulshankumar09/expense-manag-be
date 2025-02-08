@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SharedLibrary.Infrastructure.Interceptors;
-using SharedLibrary.Services;
+using SharedLibrary.Services.Audit;
 using System.Text;
 
 namespace AuthService.API.Extensions;
@@ -59,8 +59,7 @@ public static class ServiceCollectionExtensions
             options.SignIn.RequireConfirmedEmail = true;
         })
         .AddEntityFrameworkStores<AuthDbContext>()
-        .AddDefaultTokenProviders()
-        .AddSignInManager<SignInManager<User>>();
+        .AddDefaultTokenProviders();
 
         return services;
     }
@@ -78,13 +77,11 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IGoogleAuthService, GoogleAuthService>();
         services.AddScoped<IAuditService, AuditService>();
-        services.AddScoped<IRoleSettingsRepository, RoleSettingsRepository>();
 
         // Register Application Services
         services.AddScoped<IUserService, UserService>();
-        services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IOtpService, OtpService>();
-        services.AddScoped<IAuthService, Application.Services.AuthService>();
+        services.AddScoped<IRoleService, RoleService>();
 
         // Add HTTP client for external services
         services.AddHttpClient();

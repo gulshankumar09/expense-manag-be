@@ -23,4 +23,4 @@ public class Email
     public override string ToString() => Value;
 
     public static implicit operator string(Email email) => email.Value;
-} 
+}

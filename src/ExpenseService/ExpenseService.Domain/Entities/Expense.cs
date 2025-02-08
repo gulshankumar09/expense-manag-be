@@ -1,4 +1,3 @@
-using Microsoft.VisualBasic;
 using SharedLibrary.Domain;
 
 namespace ExpenseService.Domain.Entities;
@@ -30,5 +29,5 @@ public class ExpenseSplit
         UserId = userId;
         Amount = amount;
     }
-    
-} 
+
+}

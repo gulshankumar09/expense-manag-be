@@ -1,7 +1,7 @@
-using TransactionService.Domain.Entities;
 using SharedLibrary.Repositories;
-using TransactionService.Infrastructure.Persistence;
 using TransactionService.Application.Interfaces;
+using TransactionService.Domain.Entities;
+using TransactionService.Infrastructure.Persistence;
 
 namespace TransactionService.Infrastructure.Repositories;
 
@@ -10,4 +10,4 @@ public class TransactionRepository : GenericRepository<Transaction>, ITransactio
     public TransactionRepository(TransactionDbContext context) : base(context)
     {
     }
-} 
+}

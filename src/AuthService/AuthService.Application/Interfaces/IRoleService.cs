@@ -41,4 +41,4 @@ public interface IRoleService
     /// <param name="userId">The ID of the user</param>
     /// <returns>A Result containing the list of role names assigned to the user</returns>
     Task<Result<IEnumerable<string>>> GetUserRolesAsync(string userId);
-} 
+}

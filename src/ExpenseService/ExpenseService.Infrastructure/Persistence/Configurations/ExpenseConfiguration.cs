@@ -39,4 +39,4 @@ public class ExpenseSplitConfiguration : IEntityTypeConfiguration<ExpenseSplit>
             .IsRequired()
             .HasPrecision(18, 2);
     }
-} 
+}

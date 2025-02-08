@@ -1,9 +1,9 @@
 using AuthService.Application.DTOs;
 using AuthService.Application.Interfaces;
 using AuthService.Domain.Entities;
-using SharedLibrary.Models;
-using Microsoft.AspNetCore.Identity;
 using AuthService.Domain.ValueObjects;
+using Microsoft.AspNetCore.Identity;
+using SharedLibrary.Models;
 
 namespace AuthService.Application.Services;
 
@@ -29,16 +29,16 @@ public class UserService : IUserService
     public async Task<Result<User>> GetUserByIdAsync(Guid id)
     {
         var user = await _userRepository.GetByIdAsync(id);
-        return user != null 
-            ? Result<User>.Success(user) 
+        return user != null
+            ? Result<User>.Success(user)
             : Result<User>.Failure("User not found");
     }
 
     public async Task<Result<User>> GetUserByEmailAsync(string email)
     {
         var user = await _userRepository.GetByEmailAsync(email);
-        return user != null 
-            ? Result<User>.Success(user) 
+        return user != null
+            ? Result<User>.Success(user)
             : Result<User>.Failure("User not found");
     }
 
@@ -49,7 +49,7 @@ public class UserService : IUserService
         {
             if (!existingUser.EmailConfirmed)
                 return Result<string>.Success("Email already registered. Please verify your email.");
-            
+
             return Result<string>.Failure("Email already registered and verified.");
         }
 
@@ -66,7 +66,7 @@ public class UserService : IUserService
         var result = await _userManager.CreateAsync(user, request.Password);
         if (!result.Succeeded)
             return Result<string>.Failure(result.Errors.First().Description);
-        
+
         // Add to User role by default
         await _userManager.AddToRoleAsync(user, "User");
 
@@ -131,4 +131,4 @@ public class UserService : IUserService
 
         return Result<string>.Success("User roles updated successfully");
     }
-} 
+}

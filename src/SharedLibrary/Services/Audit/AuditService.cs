@@ -1,15 +1,10 @@
 using Microsoft.AspNetCore.Http;
 
-namespace SharedLibrary.Services;
+namespace SharedLibrary.Services.Audit;
 
-public class AuditService : IAuditService
+public class AuditService(IHttpContextAccessor httpContextAccessor) : IAuditService
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public AuditService(IHttpContextAccessor httpContextAccessor)
-    {
-        _httpContextAccessor = httpContextAccessor;
-    }
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
     public string GetCurrentUserId()
     {

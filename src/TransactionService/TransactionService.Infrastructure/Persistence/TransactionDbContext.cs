@@ -16,4 +16,4 @@ public class TransactionDbContext : DbContext
     {
         modelBuilder.ApplyConfiguration(new TransactionConfiguration());
     }
-} 
+}

@@ -24,4 +24,4 @@ public class OtpService : IOtpService
         var body = $"Your verification code is: {otp}";
         await _emailService.SendEmailAsync(email, subject, body);
     }
-} 
+}

@@ -1,8 +1,6 @@
 using AuthService.Domain.Entities;
-using AuthService.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SharedLibrary.Infrastructure.Configurations;
 
 namespace AuthService.Infrastructure.Persistence.Configurations;
 
@@ -45,4 +43,4 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.RefreshToken)
             .HasMaxLength(100);
     }
-} 
+}

@@ -1,4 +1,3 @@
-using SharedLibrary.Domain;
 using AuthService.Domain.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 
@@ -78,4 +77,4 @@ public class User : IdentityUser //: BaseEntity
     {
         PhoneNumber = phoneNumber;
     }
-} 
+}

@@ -1,4 +1,4 @@
-namespace SharedLibrary.Services;
+namespace SharedLibrary.Services.Audit;
 
 public interface IAuditService
 {

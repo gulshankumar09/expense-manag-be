@@ -16,4 +16,4 @@ public class Password
 
         return new Password(hash);
     }
-} 
+}

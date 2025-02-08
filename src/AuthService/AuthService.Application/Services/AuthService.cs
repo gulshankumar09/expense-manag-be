@@ -1,15 +1,15 @@
 using AuthService.Application.DTOs;
 using AuthService.Application.Interfaces;
 using AuthService.Domain.Entities;
-using SharedLibrary.Models;
+using AuthService.Domain.ValueObjects;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using SharedLibrary.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using AuthService.Domain.ValueObjects;
-using Microsoft.EntityFrameworkCore;
 
 namespace AuthService.Application.Services;
 
@@ -56,7 +56,7 @@ public class AuthService : IAuthService
         {
             if (result.IsLockedOut)
                 return Result<AuthResponse>.Failure("Account is locked. Try again later.");
-            
+
             return Result<AuthResponse>.Failure("Invalid credentials");
         }
 
@@ -73,7 +73,7 @@ public class AuthService : IAuthService
         {
             var newUser = User.CreateWithGoogle(email, googleId, firstName, lastName);
             var result = await _userManager.CreateAsync(newUser);
-            
+
             if (!result.Succeeded)
                 return Result<AuthResponse>.Failure(result.Errors.First().Description);
 
@@ -87,7 +87,7 @@ public class AuthService : IAuthService
                 existingUser.GoogleId = googleId;
                 existingUser.EmailConfirmed = true;
                 var updateResult = await _userManager.UpdateAsync(existingUser);
-                
+
                 if (!updateResult.Succeeded)
                     return Result<AuthResponse>.Failure(updateResult.Errors.First().Description);
             }
@@ -111,7 +111,7 @@ public class AuthService : IAuthService
         if (user.EmailConfirmed)
             return Result<AuthResponse>.Failure("Email is already verified");
 
-        if (user.VerificationToken != request.Otp || !user.VerificationTokenExpiry.HasValue || 
+        if (user.VerificationToken != request.Otp || !user.VerificationTokenExpiry.HasValue ||
             user.VerificationTokenExpiry.Value < DateTime.UtcNow)
             return Result<AuthResponse>.Failure("Invalid or expired OTP");
 
@@ -157,7 +157,7 @@ public class AuthService : IAuthService
     /// <inheritdoc/>
     public async Task<Result<AuthResponse>> RefreshTokenAsync(string refreshToken)
     {
-        var user = await _userManager.Users.FirstOrDefaultAsync(u => 
+        var user = await _userManager.Users.FirstOrDefaultAsync(u =>
             u.RefreshToken == refreshToken && u.RefreshTokenExpiry > DateTime.UtcNow);
 
         if (user == null)
@@ -213,7 +213,7 @@ public class AuthService : IAuthService
             new(ClaimTypes.Role, string.Join(", ", roles))
         };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? 
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ??
             throw new InvalidOperationException("JWT Key not found in configuration")));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         var expires = DateTime.UtcNow.AddMinutes(Convert.ToInt32(_configuration["Jwt:ExpiryInMinutes"] ?? "60"));
@@ -243,4 +243,4 @@ public class AuthService : IAuthService
             )
         );
     }
-} 
+}
