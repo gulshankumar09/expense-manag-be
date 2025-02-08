@@ -38,3 +38,8 @@ docker-compose up -d
 docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 
 docker-compose exec authservice dotnet ef database update
+
+
+dotnet dev-certs https --clean
+dotnet dev-certs https --trust
+dotnet dev-certs https -ep ./certs/aspnetapp.pfx -p password

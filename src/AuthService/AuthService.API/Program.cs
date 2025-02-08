@@ -1,5 +1,4 @@
 using AuthService.API.Extensions;
-using Microsoft.AspNetCore.Identity;
 using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
