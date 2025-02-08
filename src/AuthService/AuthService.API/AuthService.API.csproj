@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Splitter.ServiceDefaults\Splitter.ServiceDefaults.csproj" />
     <ProjectReference Include="..\AuthService.Application\AuthService.Application.csproj" />
     <ProjectReference Include="..\AuthService.Infrastructure\AuthService.Infrastructure.csproj" />
     <ProjectReference Include="..\..\SharedLibrary\SharedLibrary.csproj" />
