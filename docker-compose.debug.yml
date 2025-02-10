@@ -27,11 +27,11 @@ services:
       - NUGET_FALLBACK_PACKAGES=
       - VSTEST_HOST_DEBUG=1
 
-      - ConnectionStrings__DefaultConnection=Server=expense-db;Database=AuthServiceDB;User Id=sa;Password=Root123#;MultipleActiveResultSets=true;TrustServerCertificate=True
+      # - ConnectionStrings__DefaultConnection=Server=expense-db;Database=AuthServiceDB;User Id=sa;Password=Root123#;MultipleActiveResultSets=true;TrustServerCertificate=True
     networks:
       - expense-network
-    depends_on:
-      - expense-db
+    # depends_on:
+    #   - expense-db
     healthcheck:
       test: curl -f -k http://localhost:8080/health || curl -f -k https://localhost:8081/health
       interval: 30s
@@ -39,25 +39,25 @@ services:
       retries: 3
       start_period: 40s
 
-  expense-db:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: expense-db
-    environment:
-      - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=Root123#
-      - TZ=UTC
-    ports:
-      - "1433:1433"
-    volumes:
-      - sqlserver_data:/var/opt/mssql
-    networks:
-      - expense-network
-    healthcheck:
-      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "Root123#" -Q "SELECT 1" -b -o /dev/null
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
+  # expense-db:
+  #   image: mcr.microsoft.com/mssql/server:2022-latest
+  #   container_name: expense-db
+  #   environment:
+  #     - ACCEPT_EULA=Y
+  #     - MSSQL_SA_PASSWORD=Root123#
+  #     - TZ=UTC
+  #   ports:
+  #     - "1433:1433"
+  #   volumes:
+  #     - sqlserver_data:/var/opt/mssql
+  #   networks:
+  #     - expense-network
+  #   healthcheck:
+  #     test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "Root123#" -Q "SELECT 1" -b -o /dev/null
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 10s
 
 networks:
   expense-network:
