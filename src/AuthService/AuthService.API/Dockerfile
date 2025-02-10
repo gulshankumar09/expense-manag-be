@@ -18,7 +18,7 @@ COPY src/ .
 
 # Build and publish
 WORKDIR "/src/AuthService/AuthService.API"
-RUN dotnet publish "AuthService.API.csproj" -c Release -o /app/publish /p:UseAppHost=false -a $TARGETARCH
+RUN dotnet publish "AuthService.API.csproj" -c Release -o /app/publish /p:UseAppHost=false -a $TARGETARCH /p:DefineConstants=DOCKER
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:9.0

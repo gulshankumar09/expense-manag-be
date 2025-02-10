@@ -4,6 +4,7 @@ using AuthService.Application.Interfaces;
 using AuthService.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SharedLibrary.Models;
@@ -180,17 +181,18 @@ public class RoleService : IRoleService
     }
 
     /// <inheritdoc/>
-    public async Task<Result<IEnumerable<string>>> ListRolesAsync()
+    public async Task<Result<ListOfRolesResponse>> ListRolesAsync()
     {
         try
         {
-            var roles = _roleManager.Roles.Select(r => r.Name).ToList();
-            return Result<IEnumerable<string>>.Success(roles!);
+            var roles = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
+            var response = new ListOfRolesResponse(roles);
+            return Result<ListOfRolesResponse>.Success(response);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error listing roles");
-            return Result<IEnumerable<string>>.Failure("An error occurred while listing roles");
+            return Result<ListOfRolesResponse>.Failure("An error occurred while listing roles");
         }
     }
 

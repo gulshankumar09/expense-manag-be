@@ -57,3 +57,15 @@ public record UpdateUserRequest(
 public record ChangePasswordRequest(
     string CurrentPassword,
     string NewPassword);
+
+public record RoleDto(
+    string Id,
+    string Name,
+    string NormalizedName,
+    int UsersCount);
+
+public record ListOfRolesResponse(
+    IEnumerable<string> Roles);
+
+public record RefreshTokenRequest(
+    string RefreshToken);

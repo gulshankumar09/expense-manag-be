@@ -22,24 +22,25 @@ services:
       - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
       - DOTNET_USE_POLLING_FILE_WATCHER=true
-
       - ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS=true
       - NUGET_FALLBACK_PACKAGES=
       - VSTEST_HOST_DEBUG=1
-
-      # - ConnectionStrings__DefaultConnection=Server=expense-db;Database=AuthServiceDB;User Id=sa;Password=Root123#;MultipleActiveResultSets=true;TrustServerCertificate=True
+      # Database Configuration
+      - ConnectionStrings__DefaultConnection=Server=expense-db.cvo804wmc6e2.us-east-1.rds.amazonaws.com,1433;Database=AuthServiceDB;User Id=admin;Password=Root326745#;MultipleActiveResultSets=true;TrustServerCertificate=True
+      # Enable SQL Client logging
+      - Logging__LogLevel__Microsoft.EntityFrameworkCore.Database.Command=Debug
+      - Logging__LogLevel__Microsoft.Data.SqlClient=Debug
     networks:
       - expense-network
-    # depends_on:
-    #   - expense-db
+
     healthcheck:
       test: curl -f -k http://localhost:8080/health || curl -f -k https://localhost:8081/health
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
-
-  # expense-db:
+      
+    # expense-db:
   #   image: mcr.microsoft.com/mssql/server:2022-latest
   #   container_name: expense-db
   #   environment:
@@ -59,10 +60,7 @@ services:
   #     retries: 5
   #     start_period: 10s
 
+
 networks:
   expense-network:
     driver: bridge
-
-volumes:
-  sqlserver_data:
-    driver: local

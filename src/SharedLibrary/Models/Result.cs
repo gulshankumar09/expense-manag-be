@@ -1,18 +1,94 @@
+using System.Text.Json.Serialization;
+
 namespace SharedLibrary.Models;
 
-public class Result<T>
+/// <summary>
+/// Represents a basic result without data, only success/failure status
+/// </summary>
+public class Result : IResult
 {
-    public bool IsSuccess { get; }
-    public T Data { get; }
-    public string Error { get; }
+    public bool IsSuccess { get; private set; }
+    public object? Error { get; private set; }
 
-    private Result(bool isSuccess, T data, string error)
+    [JsonIgnore]
+    internal Dictionary<string, string> Headers { get; private set; } = new Dictionary<string, string>();
+
+    private Result(bool isSuccess, object? error = null)
+    {
+        IsSuccess = isSuccess;
+        Error = error;
+    }
+
+    public void AddHeader(string key, string value)
+    {
+        Headers[key] = value;
+    }
+
+    public IReadOnlyDictionary<string, string> GetHeaders()
+    {
+        return Headers.ToDictionary(x => x.Key, x => x.Value);
+    }
+
+    public static Result Success() => new(true);
+    public static Result Failure(object error) => new(false, error);
+
+    // Convert to Result<T>
+    public Result<T> ToTyped<T>(T? data = default) => IsSuccess
+        ? Result<T>.Success(data!)
+        : Result<T>.Failure(Error!);
+}
+
+/// <summary>
+/// Represents a result of an operation that can succeed with data or fail with an error
+/// </summary>
+/// <typeparam name="T">The type of the result data</typeparam>
+public class Result<T> : IResult<T>
+{
+    public bool IsSuccess { get; private set; }
+    public T? Data { get; private set; }
+    public object? Error { get; private set; }
+
+    [JsonIgnore]
+    internal Dictionary<string, string> Headers { get; private set; } = new Dictionary<string, string>();
+
+    [JsonIgnore]
+    IReadOnlyDictionary<string, string> IResult<T>.Headers => Headers;
+
+    private Result(bool isSuccess, T? data, object? error)
     {
         IsSuccess = isSuccess;
         Data = data;
         Error = error;
     }
 
-    public static Result<T> Success(T data) => new(true, data, string.Empty);
-    public static Result<T> Failure(string error) => new(false, default, error);
+    public void AddHeader(string key, string value)
+    {
+        Headers[key] = value;
+    }
+
+    public IReadOnlyDictionary<string, string> GetHeaders()
+    {
+        return Headers.ToDictionary(x => x.Key, x => x.Value);
+    }
+
+    public static Result<T> Success(T data) => new(true, data, null);
+    public static Result<T> Failure(object error) => new(false, default, error);
+
+    /// <summary>
+    /// Creates a new successful result from another result type
+    /// </summary>
+    public static Result<T> From<TSource>(Result<TSource> result, Func<TSource, T> mapper)
+    {
+        if (result.IsSuccess && result.Data != null)
+        {
+            var newResult = Success(mapper(result.Data));
+            foreach (var header in result.GetHeaders())
+            {
+                newResult.AddHeader(header.Key, header.Value);
+            }
+            return newResult;
+        }
+
+        return new Result<T>(false, default, result.Error);
+    }
 }

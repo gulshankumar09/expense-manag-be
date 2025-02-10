@@ -11,7 +11,7 @@ namespace AuthService.API.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "Admin")]
+[Authorize(Policy = "RequireSuperAdminRole")]
 public class RolesController : ControllerBase
 {
     private readonly IRoleService _roleService;
@@ -77,13 +77,13 @@ public class RolesController : ControllerBase
     /// <summary>
     /// Retrieves a list of all roles in the system
     /// </summary>
-    /// <returns>A list of role names</returns>
-    /// <response code="200">Returns the list of roles</response>
+    /// <returns>A list of roles with their details</returns>
+    /// <response code="200">Returns the list of roles with details</response>
     /// <response code="401">Returns when user is not authenticated</response>
-    /// <response code="403">Returns when user is not authorized (not an admin)</response>
+    /// <response code="403">Returns when user is not authorized (not a SuperAdmin)</response>
     [HttpGet("list")]
-    [ProducesResponseType(typeof(Result<IEnumerable<string>>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<Result<IEnumerable<string>>>> ListRoles()
+    [ProducesResponseType(typeof(Result<ListOfRolesResponse>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<Result<ListOfRolesResponse>>> ListRoles()
     {
         var result = await _roleService.ListRolesAsync();
         return Ok(result);

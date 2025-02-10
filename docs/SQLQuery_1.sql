@@ -29,7 +29,6 @@ SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'
 
 
 
-DROP DATABASE AuthServiceDB;
 
 ----------------------------------------------------------------------------------------------------
 GO
@@ -37,12 +36,7 @@ GO
 
 USE AuthServiceDB;
 
-EXEC sp_help AspNetUsers;
-
-
-SELECT * FROM AspNetUsers
-SELECT * from aspnetroles
-
+SELECT * FROM [dbo].[__EFMigrationsHistory]
 
 
 ----------------------------------------------------------------------------------------------------
@@ -62,7 +56,7 @@ INNER JOIN
 WHERE 
     OBJECT_NAME(f.referenced_object_id) = 'AspNetUsers';
 
-
+GO
 -- ## 1. Delete data from the dependent tables before deleting from AspNetUsers. For instance:
 
     DELETE FROM AspNetUserRoles WHERE UserId IN (SELECT Id FROM AspNetUsers);
@@ -91,3 +85,12 @@ WHERE
 	-- Re-enable constraints:
 
     EXEC sp_msforeachtable "ALTER TABLE ? WITH CHECK CHECK CONSTRAINT all";
+
+
+
+    GO
+
+    USE AuthServiceDB;
+
+    SELECT * FROM AspNetUsers
+    

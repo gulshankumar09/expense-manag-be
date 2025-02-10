@@ -3,7 +3,13 @@ using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddServiceDefaults();
+#if !DOCKER
+// Only add service defaults when not running in a container (i.e., when running with Aspire)
+if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER")))
+{
+    builder.AddServiceDefaults();
+}
+#endif
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -32,7 +38,13 @@ builder.Services.AddRateLimiter(options =>
 
 var app = builder.Build();
 
-app.MapDefaultEndpoints();
+#if !DOCKER
+// Only map default endpoints when not running in a container
+if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER")))
+{
+    app.MapDefaultEndpoints();
+}
+#endif
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

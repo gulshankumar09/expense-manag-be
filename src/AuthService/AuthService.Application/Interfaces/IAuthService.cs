@@ -4,67 +4,47 @@ using SharedLibrary.Models;
 namespace AuthService.Application.Interfaces;
 
 /// <summary>
-/// Service interface for handling authentication and authorization operations
+/// Service interface for authentication and authorization operations
 /// </summary>
 public interface IAuthService
 {
     /// <summary>
-    /// Authenticates a user using email and password
+    /// Registers a new user in the system
     /// </summary>
-    /// <param name="request">The login credentials</param>
-    /// <returns>A Result containing authentication response with tokens if successful</returns>
-    Task<Result<AuthResponse>> LoginAsync(LoginRequest request);
+    Task<IResult<AuthResponse>> RegisterAsync(RegisterRequest request);
 
     /// <summary>
-    /// Authenticates or creates a user using Google OAuth credentials
+    /// Authenticates a user and generates access tokens
     /// </summary>
-    /// <param name="email">The user's email from Google</param>
-    /// <param name="googleId">The unique Google ID</param>
-    /// <param name="firstName">The user's first name</param>
-    /// <param name="lastName">The user's last name</param>
-    /// <returns>A Result containing authentication response with tokens if successful</returns>
-    Task<Result<AuthResponse>> GoogleLoginAsync(string email, string googleId, string firstName, string lastName);
+    Task<IResult<AuthResponse>> LoginAsync(LoginRequest request);
 
     /// <summary>
-    /// Verifies a user's email using OTP
+    /// Refreshes the access token using a valid refresh token
     /// </summary>
-    /// <param name="request">The email and OTP verification details</param>
-    /// <returns>A Result containing authentication response with tokens if successful</returns>
-    Task<Result<AuthResponse>> VerifyOtpAsync(VerifyOtpRequest request);
+    Task<IResult<AuthResponse>> RefreshTokenAsync(RefreshTokenRequest request);
 
     /// <summary>
-    /// Initiates the password reset process for a user
+    /// Logs out a user by invalidating their refresh token
     /// </summary>
-    /// <param name="request">The email address for password reset</param>
-    /// <returns>A Result containing a success message or error details</returns>
-    Task<Result<string>> ForgotPasswordAsync(ForgotPasswordRequest request);
+    Task<IResult> LogoutAsync(string userId);
 
     /// <summary>
-    /// Resets a user's password using the reset token
+    /// Verifies a user's email address using a verification token
     /// </summary>
-    /// <param name="request">The password reset details including token</param>
-    /// <returns>A Result containing a success message or error details</returns>
-    Task<Result<string>> ResetPasswordAsync(ResetPasswordRequest request);
+    Task<IResult> VerifyEmailAsync(string token);
 
     /// <summary>
-    /// Generates new access and refresh tokens using a valid refresh token
+    /// Initiates the password reset process by sending a reset link
     /// </summary>
-    /// <param name="refreshToken">The current refresh token</param>
-    /// <returns>A Result containing new authentication tokens if successful</returns>
-    Task<Result<AuthResponse>> RefreshTokenAsync(string refreshToken);
+    Task<IResult> ForgotPasswordAsync(ForgotPasswordRequest request);
 
     /// <summary>
-    /// Invalidates a user's refresh token
+    /// Resets a user's password using a valid reset token
     /// </summary>
-    /// <param name="userId">The ID of the user</param>
-    /// <returns>A Result containing a success message or error details</returns>
-    Task<Result<string>> RevokeTokenAsync(string userId);
+    Task<IResult> ResetPasswordAsync(ResetPasswordRequest request);
 
     /// <summary>
-    /// Changes a user's password
+    /// Changes a user's password after verifying their current password
     /// </summary>
-    /// <param name="userId">The ID of the user</param>
-    /// <param name="request">The current and new password details</param>
-    /// <returns>A Result containing a success message or error details</returns>
-    Task<Result<string>> ChangePasswordAsync(string userId, ChangePasswordRequest request);
+    Task<IResult> ChangePasswordAsync(ChangePasswordRequest request);
 }

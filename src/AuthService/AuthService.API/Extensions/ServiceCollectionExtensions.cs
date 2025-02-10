@@ -77,11 +77,13 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IGoogleAuthService, GoogleAuthService>();
         services.AddScoped<IAuditService, AuditService>();
+        services.AddScoped<IRoleSettingsRepository, RoleSettingsRepository>();
+        services.AddScoped<IOtpService, OtpService>();
 
         // Register Application Services
         services.AddScoped<IUserService, UserService>();
-        services.AddScoped<IOtpService, OtpService>();
         services.AddScoped<IRoleService, RoleService>();
+        services.AddScoped<IAuthService, Application.Services.AuthService>();
 
         // Add HTTP client for external services
         services.AddHttpClient();
@@ -118,7 +120,7 @@ public static class ServiceCollectionExtensions
 
         services.AddAuthorization(options =>
         {
-            options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+            options.AddPolicy("RequireSuperAdminRole", policy => policy.RequireRole("SuperAdmin"));
             options.AddPolicy("RequireUserRole", policy => policy.RequireRole("User"));
         });
 
