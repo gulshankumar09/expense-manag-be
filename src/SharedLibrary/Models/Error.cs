@@ -56,8 +56,8 @@ public class Error
     /// <summary>
     /// Creates a conflict error
     /// </summary>
-    public static Error Conflict()
-        => new(ErrorConstants.Codes.ConflictCode, ErrorConstants.Codes.Conflict);
+    public static Error Conflict(object? details = null)
+        => new(ErrorConstants.Codes.ConflictCode, ErrorConstants.Codes.Conflict, details);
 
     /// <summary>
     /// Creates a bad request error

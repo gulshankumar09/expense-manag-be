@@ -1,33 +1,90 @@
+using System.ComponentModel.DataAnnotations;
 using AuthService.Domain.ValueObjects;
+using SharedLibrary.Validation;
 
 namespace AuthService.Application.DTOs;
 
-public record RegisterRequest(
-    string Email,
-    string Password,
-    string FirstName,
-    string LastName,
-    string PhoneNumber);
+public record RegisterRequest
+{
+    [Required]
+    [EmailAddress]
+    public string Email { get; init; } = string.Empty;
 
-public record LoginRequest(
-    string Email,
-    string Password);
+    [Required]
+    [PasswordValidation]
+    public string Password { get; init; } = string.Empty;
 
-public record VerifyEmailRequest(
-    string Email,
-    string Token);
+    [Required]
+    [StringLength(100, MinimumLength = 2)]
+    public string FirstName { get; init; } = string.Empty;
 
-public record ForgotPasswordRequest(
-    string Email);
+    [StringLength(100, MinimumLength = 2)]
+    public string LastName { get; init; } = string.Empty;
 
-public record ResetPasswordRequest(
-    string Email,
-    string Token,
-    string NewPassword);
+    [Phone]
+    public string PhoneNumber { get; init; } = string.Empty;
+}
 
-public record VerifyOtpRequest(
-    string Email,
-    string Otp);
+public record LoginRequest
+{
+    [Required]
+    [EmailAddress]
+    public string Email { get; init; } = string.Empty;
+
+    [Required]
+    public string Password { get; init; } = string.Empty;
+}
+
+public record VerifyEmailRequest
+{
+    [Required]
+    [EmailAddress]
+    [NoXss]
+    public string Email { get; init; } = string.Empty;
+
+    [Required]
+    public string Token { get; init; } = string.Empty;
+}
+
+public record ForgotPasswordRequest
+{
+    [Required]
+    [EmailAddress]
+    [NoXss]
+    public string Email { get; init; } = string.Empty;
+}
+
+public record ResetPasswordRequest
+{
+    [Required]
+    [EmailAddress]
+    [NoXss]
+    public string Email { get; init; } = string.Empty;
+
+    [Required]
+    public string Token { get; init; } = string.Empty;
+
+    [Required]
+    [PasswordValidation(
+        minLength: 8,
+        maxLength: 128,
+        requireDigit: true,
+        requireLowercase: true,
+        requireUppercase: true,
+        requireSpecialChar: true)]
+    public string NewPassword { get; init; } = string.Empty;
+}
+
+public record VerifyOtpRequest
+{
+    [Required]
+    [EmailAddress]
+    [NoXss]
+    public string Email { get; init; } = string.Empty;
+
+    [Required]
+    public string Otp { get; init; } = string.Empty;
+}
 
 public record AuthResponse(
     string AccessToken,
@@ -42,21 +99,51 @@ public record UserDto(
     bool IsEmailVerified,
     IList<string> Roles);
 
-public record CreateRoleRequest(
-    string Name);
+public record CreateRoleRequest
+{
+    [Required]
+    [NoXss]
+    public string Name { get; init; } = string.Empty;
+}
 
-public record AssignRoleRequest(
-    string UserId,
-    string RoleName);
+public record AssignRoleRequest
+{
+    [Required]
+    public string UserId { get; init; } = string.Empty;
 
-public record UpdateUserRequest(
-    string FirstName,
-    string LastName,
-    string PhoneNumber);
+    [Required]
+    [NoXss]
+    public string RoleName { get; init; } = string.Empty;
+}
 
-public record ChangePasswordRequest(
-    string CurrentPassword,
-    string NewPassword);
+public record UpdateUserRequest
+{
+    [Required]
+    [NoXss]
+    public string FirstName { get; init; } = string.Empty;
+
+    [NoXss]
+    public string LastName { get; init; } = string.Empty;
+
+    [NoXss]
+    public string PhoneNumber { get; init; } = string.Empty;
+}
+
+public record ChangePasswordRequest
+{
+    [Required]
+    public string CurrentPassword { get; init; } = string.Empty;
+
+    [Required]
+    [PasswordValidation(
+        minLength: 8,
+        maxLength: 128,
+        requireDigit: true,
+        requireLowercase: true,
+        requireUppercase: true,
+        requireSpecialChar: true)]
+    public string NewPassword { get; init; } = string.Empty;
+}
 
 public record RoleDto(
     string Id,
@@ -67,5 +154,8 @@ public record RoleDto(
 public record ListOfRolesResponse(
     IEnumerable<string> Roles);
 
-public record RefreshTokenRequest(
-    string RefreshToken);
+public record RefreshTokenRequest
+{
+    [Required]
+    public string RefreshToken { get; init; } = string.Empty;
+}

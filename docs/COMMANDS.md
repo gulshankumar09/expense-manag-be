@@ -32,6 +32,12 @@ dotnet ef database update --project src/AuthService/AuthService.Infrastructure/A
 dotnet run --launch-profile https
 ```
 
+# Build the AuthService API project
+
+```C#
+dotnet build "src\AuthService\AuthService.API\AuthService.API.csproj"
+```
+
 # Watch for changes and run the AuthService API project
 
 ```C#
@@ -57,3 +63,7 @@ dotnet dev-certs https -ep ./certs/aspnetapp.pfx -p password
 dotnet ef database update 20250210183549_AddSuperAdminRole --project src/AuthService/AuthService.Infrastructure --startup-project src/AuthService/AuthService.API
 
 dotnet ef database update --project src/AuthService/AuthService.Infrastructure --startup-project src/AuthService/AuthService.API
+
+# Run the SQL Server container
+
+docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=Root123#" -p 1433:1433 --name expensedb --hostname expensedb --restart unless-stopped -v expensedb-data:/var/opt/mssql -d mcr.microsoft.com/mssql/server:2022-latest

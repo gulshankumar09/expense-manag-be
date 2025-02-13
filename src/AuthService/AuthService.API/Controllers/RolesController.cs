@@ -3,6 +3,7 @@ using AuthService.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SharedLibrary.Models;
+using SharedLibrary.Constants;
 
 namespace AuthService.API.Controllers;
 
@@ -38,14 +39,29 @@ public class RolesController : ControllerBase
     /// <response code="200">Returns success message when role is created</response>
     /// <response code="400">Returns error message when role creation fails</response>
     /// <response code="401">Returns when user is not authenticated</response>
-    /// <response code="403">Returns when user is not authorized (not an admin)</response>
+    /// <response code="403">Returns when user is not authorized (not a SuperAdmin)</response>
+    /// <response code="409">Returns when role already exists</response>
     [HttpPost("create")]
-    [ProducesResponseType(typeof(Result<string>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result<string>), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Result<string>>> CreateRole([FromBody] CreateRoleRequest request)
+    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<Result>> CreateRole([FromBody] CreateRoleRequest request)
     {
         var result = await _roleService.CreateRoleAsync(request);
-        return result.IsSuccess ? Ok(result) : BadRequest(result);
+
+        if (!result.IsSuccess)
+        {
+            return result.Error switch
+            {
+                Error { Code: ErrorConstants.Codes.ConflictCode } => Conflict(result),
+                Error { Code: ErrorConstants.Codes.UnauthorizedCode } => Unauthorized(result),
+                _ => BadRequest(result)
+            };
+        }
+
+        return Ok(result);
     }
 
     /// <summary>
@@ -56,33 +72,65 @@ public class RolesController : ControllerBase
     /// <response code="200">Returns success message when role is assigned</response>
     /// <response code="400">Returns error message when assignment fails</response>
     /// <response code="401">Returns when user is not authenticated</response>
-    /// <response code="403">Returns when user is not authorized (not an admin)</response>
+    /// <response code="403">Returns when user is not authorized (not a SuperAdmin)</response>
     /// <response code="404">Returns when user or role is not found</response>
+    /// <response code="409">Returns when user already has the role</response>
     [HttpPost("assign")]
-    [ProducesResponseType(typeof(Result<string>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result<string>), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(Result<string>), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Result<string>>> AssignRole([FromBody] AssignRoleRequest request)
+    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<Result>> AssignRole([FromBody] AssignRoleRequest request)
     {
         var result = await _roleService.AssignRoleAsync(request);
+
         if (!result.IsSuccess)
         {
-            return result.Error.Contains("not found")
-                ? NotFound(result)
-                : BadRequest(result);
+            return result.Error switch
+            {
+                Error { Code: ErrorConstants.Codes.NotFoundCode } => NotFound(result),
+                Error { Code: ErrorConstants.Codes.UnauthorizedCode } => Unauthorized(result),
+                Error { Code: ErrorConstants.Codes.ConflictCode } => Conflict(result),
+                _ => BadRequest(result)
+            };
         }
+
         return Ok(result);
+    }
+
+    /// <summary>
+    /// Updates the maximum number of allowed SuperAdmin users
+    /// </summary>
+    /// <param name="newLimit">The new maximum limit for SuperAdmin users</param>
+    /// <returns>A success message if limit is updated successfully</returns>
+    /// <response code="200">Returns success message when limit is updated</response>
+    /// <response code="400">Returns error message when update fails</response>
+    /// <response code="401">Returns when user is not authenticated</response>
+    /// <response code="403">Returns when user is not authorized (not a SuperAdmin)</response>
+    [HttpPut("superadmin-limit")]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<Result>> UpdateSuperAdminLimit([FromBody] int newLimit)
+    {
+        var result = await _roleService.UpdateSuperAdminLimitAsync(newLimit);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     /// <summary>
     /// Retrieves a list of all roles in the system
     /// </summary>
     /// <returns>A list of roles with their details</returns>
-    /// <response code="200">Returns the list of roles with details</response>
+    /// <response code="200">Returns the list of roles</response>
     /// <response code="401">Returns when user is not authenticated</response>
     /// <response code="403">Returns when user is not authorized (not a SuperAdmin)</response>
     [HttpGet("list")]
     [ProducesResponseType(typeof(Result<ListOfRolesResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<Result<ListOfRolesResponse>>> ListRoles()
     {
         var result = await _roleService.ListRolesAsync();
@@ -96,11 +144,13 @@ public class RolesController : ControllerBase
     /// <returns>A list of role names assigned to the user</returns>
     /// <response code="200">Returns the list of user's roles</response>
     /// <response code="401">Returns when user is not authenticated</response>
-    /// <response code="403">Returns when user is not authorized (not an admin)</response>
+    /// <response code="403">Returns when user is not authorized (not a SuperAdmin)</response>
     /// <response code="404">Returns when user is not found</response>
     [HttpGet("user/{userId}")]
     [ProducesResponseType(typeof(Result<IEnumerable<string>>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result<IEnumerable<string>>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Result<IEnumerable<string>>>> GetUserRoles(string userId)
     {
         var result = await _roleService.GetUserRolesAsync(userId);

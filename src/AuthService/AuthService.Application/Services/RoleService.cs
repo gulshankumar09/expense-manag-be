@@ -73,44 +73,41 @@ public class RoleService : IRoleService
     }
 
     /// <inheritdoc/>
-    public async Task<Result<string>> CreateRoleAsync(CreateRoleRequest request)
+    public async Task<IResult> CreateRoleAsync(CreateRoleRequest request)
     {
         try
         {
             if (await _roleManager.RoleExistsAsync(request.Name))
-                return Result<string>.Failure("Role already exists");
+                return Result.Failure(Error.Conflict());
 
             var result = await _roleManager.CreateAsync(new IdentityRole(request.Name));
             if (!result.Succeeded)
-                return Result<string>.Failure(result.Errors.First().Description);
+                return Result.Failure(Error.BadRequest(result.Errors.First().Description));
 
             _logger.LogInformation("Role '{RoleName}' created successfully", request.Name);
-            return Result<string>.Success($"Role '{request.Name}' created successfully");
+            return Result.Success();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error creating role '{RoleName}'", request.Name);
-            return Result<string>.Failure("An error occurred while creating the role");
+            return Result.Failure(Error.InternalServerError());
         }
     }
 
     /// <inheritdoc/>
-    public async Task<Result<string>> AssignRoleAsync(AssignRoleRequest request)
+    public async Task<IResult> AssignRoleAsync(AssignRoleRequest request)
     {
         try
         {
-            // Check if current user is authorized to assign this role
             if (!await IsCurrentUserAuthorizedForRole(request.RoleName))
-            {
-                return Result<string>.Failure("You are not authorized to assign this role");
-            }
+                return Result.Failure(Error.Unauthorized());
 
             var user = await _userManager.FindByIdAsync(request.UserId);
             if (user == null)
-                return Result<string>.Failure("User not found");
+                return Result.Failure(Error.NotFound());
 
             if (!await _roleManager.RoleExistsAsync(request.RoleName))
-                return Result<string>.Failure("Role not found");
+                return Result.Failure(Error.NotFound());
 
             // Special handling for SuperAdmin role
             if (request.RoleName == "SuperAdmin")
@@ -118,49 +115,35 @@ public class RoleService : IRoleService
                 var currentSuperAdmins = await _userManager.GetUsersInRoleAsync("SuperAdmin");
                 if (currentSuperAdmins.Count >= _roleConfig.MaxSuperAdminUsers && !currentSuperAdmins.Any(u => u.Id == request.UserId))
                 {
-                    return Result<string>.Failure($"Cannot assign SuperAdmin role. Maximum limit of {_roleConfig.MaxSuperAdminUsers} SuperAdmin user(s) has been reached.");
-                }
-            }
-
-            // Special handling for Admin role
-            if (request.RoleName == "Admin")
-            {
-                var currentUser = await _userManager.FindByIdAsync(_httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                if (currentUser == null)
-                    return Result<string>.Failure("Current user not found");
-
-                var currentUserRoles = await _userManager.GetRolesAsync(currentUser);
-                if (!currentUserRoles.Contains("SuperAdmin") && !currentUserRoles.Contains("Admin"))
-                {
-                    return Result<string>.Failure("Only SuperAdmin or Admin users can assign the Admin role");
+                    return Result.Failure(Error.BadRequest($"Cannot assign SuperAdmin role. Maximum limit of {_roleConfig.MaxSuperAdminUsers} SuperAdmin user(s) has been reached."));
                 }
             }
 
             if (await _userManager.IsInRoleAsync(user, request.RoleName))
-                return Result<string>.Failure("User is already in this role");
+                return Result.Failure(Error.Conflict());
 
             var result = await _userManager.AddToRoleAsync(user, request.RoleName);
             if (!result.Succeeded)
-                return Result<string>.Failure(result.Errors.First().Description);
+                return Result.Failure(Error.BadRequest(result.Errors.First().Description));
 
             _logger.LogInformation("Role '{RoleName}' assigned to user '{UserId}' successfully", request.RoleName, request.UserId);
-            return Result<string>.Success($"Role '{request.RoleName}' assigned to user successfully");
+            return Result.Success();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error assigning role '{RoleName}' to user '{UserId}'", request.RoleName, request.UserId);
-            return Result<string>.Failure("An error occurred while assigning the role");
+            return Result.Failure(Error.InternalServerError());
         }
     }
 
     /// <inheritdoc/>
-    public async Task<Result<string>> UpdateSuperAdminLimitAsync(int newLimit)
+    public async Task<IResult> UpdateSuperAdminLimitAsync(int newLimit)
     {
         try
         {
             var currentSuperAdminCount = (await _userManager.GetUsersInRoleAsync("SuperAdmin")).Count;
             if (currentSuperAdminCount > newLimit)
-                return Result<string>.Failure($"Cannot update limit to {newLimit} as there are already {currentSuperAdminCount} SuperAdmin users.");
+                return Result.Failure(Error.BadRequest($"Cannot update limit to {newLimit} as there are already {currentSuperAdminCount} SuperAdmin users."));
 
             // Update in-memory configuration
             _roleConfig.MaxSuperAdminUsers = newLimit;
@@ -171,39 +154,39 @@ public class RoleService : IRoleService
             await _roleSettingsRepository.UpdateSettingsAsync(settings);
 
             _logger.LogInformation("SuperAdmin user limit updated to {NewLimit}", newLimit);
-            return Result<string>.Success($"SuperAdmin user limit updated to {newLimit}");
+            return Result.Success();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error updating SuperAdmin user limit");
-            return Result<string>.Failure("An error occurred while updating the SuperAdmin user limit");
+            return Result.Failure(Error.InternalServerError());
         }
     }
 
     /// <inheritdoc/>
-    public async Task<Result<ListOfRolesResponse>> ListRolesAsync()
+    public async Task<IResult<ListOfRolesResponse>> ListRolesAsync()
     {
         try
         {
             var roles = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
-            var response = new ListOfRolesResponse(roles);
+            var response = new ListOfRolesResponse(roles!);
             return Result<ListOfRolesResponse>.Success(response);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error listing roles");
-            return Result<ListOfRolesResponse>.Failure("An error occurred while listing roles");
+            return Result<ListOfRolesResponse>.Failure(Error.InternalServerError());
         }
     }
 
     /// <inheritdoc/>
-    public async Task<Result<IEnumerable<string>>> GetUserRolesAsync(string userId)
+    public async Task<IResult<IEnumerable<string>>> GetUserRolesAsync(string userId)
     {
         try
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
-                return Result<IEnumerable<string>>.Failure("User not found");
+                return Result<IEnumerable<string>>.Failure(Error.NotFound());
 
             var roles = await _userManager.GetRolesAsync(user);
             return Result<IEnumerable<string>>.Success(roles);
@@ -211,7 +194,7 @@ public class RoleService : IRoleService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting roles for user '{UserId}'", userId);
-            return Result<IEnumerable<string>>.Failure("An error occurred while getting user roles");
+            return Result<IEnumerable<string>>.Failure(Error.InternalServerError());
         }
     }
 }

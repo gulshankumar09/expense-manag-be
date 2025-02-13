@@ -11,7 +11,10 @@ public class Result : IResult
     public object? Error { get; private set; }
 
     [JsonIgnore]
-    internal Dictionary<string, string> Headers { get; private set; } = new Dictionary<string, string>();
+    private Dictionary<string, string> SetHeaders  = new Dictionary<string, string>();
+
+    [JsonIgnore]
+    public IReadOnlyDictionary<string, string> Headers => SetHeaders;
 
     private Result(bool isSuccess, object? error = null)
     {
@@ -21,7 +24,7 @@ public class Result : IResult
 
     public void AddHeader(string key, string value)
     {
-        Headers[key] = value;
+        SetHeaders[key] = value;
     }
 
     public IReadOnlyDictionary<string, string> GetHeaders()
@@ -49,10 +52,10 @@ public class Result<T> : IResult<T>
     public object? Error { get; private set; }
 
     [JsonIgnore]
-    internal Dictionary<string, string> Headers { get; private set; } = new Dictionary<string, string>();
+    private Dictionary<string, string> SetHeaders = new Dictionary<string, string>();
 
     [JsonIgnore]
-    IReadOnlyDictionary<string, string> IResult<T>.Headers => Headers;
+    public IReadOnlyDictionary<string, string> Headers => SetHeaders;
 
     private Result(bool isSuccess, T? data, object? error)
     {
@@ -63,7 +66,7 @@ public class Result<T> : IResult<T>
 
     public void AddHeader(string key, string value)
     {
-        Headers[key] = value;
+        SetHeaders[key] = value;
     }
 
     public IReadOnlyDictionary<string, string> GetHeaders()

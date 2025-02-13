@@ -9,24 +9,19 @@ namespace AuthService.Application.Interfaces;
 public interface IAuthService
 {
     /// <summary>
-    /// Registers a new user in the system
-    /// </summary>
-    Task<IResult<AuthResponse>> RegisterAsync(RegisterRequest request);
-
-    /// <summary>
-    /// Authenticates a user and generates access tokens
+    /// Authenticates a user using email and password
     /// </summary>
     Task<IResult<AuthResponse>> LoginAsync(LoginRequest request);
 
     /// <summary>
-    /// Refreshes the access token using a valid refresh token
+    /// Authenticates or creates a user using Google OAuth credentials
     /// </summary>
-    Task<IResult<AuthResponse>> RefreshTokenAsync(RefreshTokenRequest request);
+    Task<IResult<AuthResponse>> GoogleLoginAsync(string email, string googleId, string firstName, string lastName);
 
     /// <summary>
-    /// Logs out a user by invalidating their refresh token
+    /// Registers a new user in the system
     /// </summary>
-    Task<IResult> LogoutAsync(string userId);
+    Task<IResult> RegisterAsync(RegisterRequest request);
 
     /// <summary>
     /// Verifies a user's email address using a verification token
@@ -47,4 +42,14 @@ public interface IAuthService
     /// Changes a user's password after verifying their current password
     /// </summary>
     Task<IResult> ChangePasswordAsync(ChangePasswordRequest request);
+
+    /// <summary>
+    /// Refreshes the access token using a valid refresh token
+    /// </summary>
+    Task<IResult<AuthResponse>> RefreshTokenAsync(RefreshTokenRequest request);
+
+    /// <summary>
+    /// Logs out a user by invalidating their refresh token
+    /// </summary>
+    Task<IResult> LogoutAsync(string userId);
 }

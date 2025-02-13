@@ -16,6 +16,12 @@ public interface IResult
     /// Gets the error information if the operation failed
     /// </summary>
     object? Error { get; }
+    
+    /// <summary>
+    /// Gets the headers associated with the result
+    /// </summary>
+    [JsonIgnore]
+    IReadOnlyDictionary<string, string> Headers { get; }
 }
 
 /// <summary>
@@ -28,10 +34,4 @@ public interface IResult<out T> : IResult
     /// Gets the data if the operation was successful
     /// </summary>
     T? Data { get; }
-
-    /// <summary>
-    /// Gets the headers associated with the result
-    /// </summary>
-    [JsonIgnore]
-    IReadOnlyDictionary<string, string> Headers { get; }
 }

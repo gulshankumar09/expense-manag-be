@@ -69,8 +69,9 @@ public static class ServiceCollectionExtensions
         // Add HttpContext accessor
         services.AddHttpContextAccessor();
 
-        // Configure Email Settings
+        // Configure Settings
         services.Configure<EmailSettings>(configuration.GetSection("Email"));
+        services.Configure<UrlSettings>(configuration.GetSection(UrlSettings.SectionName));
 
         // Register Infrastructure Services
         services.AddScoped<IUserRepository, UserRepository>();

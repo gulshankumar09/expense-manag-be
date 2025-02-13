@@ -1,11 +1,14 @@
+using AuthService.Application.Constants;
 using AuthService.Application.DTOs;
 using AuthService.Application.Interfaces;
 using AuthService.Domain.Entities;
 using AuthService.Domain.ValueObjects;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SharedLibrary.Constants;
 using SharedLibrary.Models;
+using SharedLibrary.Utility;
 
 namespace AuthService.Application.Services;
 
@@ -15,17 +18,19 @@ public class UserService : IUserService
     private readonly UserManager<User> _userManager;
     private readonly IOtpService _otpService;
     private readonly IEmailService _emailService;
-
+    private readonly IHttpContextAccessor _httpContextAccessor;
     public UserService(
         IUserRepository userRepository,
         UserManager<User> userManager,
         IOtpService otpService,
-        IEmailService emailService)
+        IEmailService emailService,
+        IHttpContextAccessor httpContextAccessor)
     {
         _userRepository = userRepository;
         _userManager = userManager;
         _otpService = otpService;
         _emailService = emailService;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     private async Task<UserResponse> MapToUserResponse(User user)
@@ -76,7 +81,9 @@ public class UserService : IUserService
                 await _otpService.SendOtpAsync(request.Email, newOtp);
 
                 var existingUserResult = Result<string>.Success("Email already registered. Please verify your email.");
-                existingUserResult.AddHeader(HeaderKeys.RedirectUrl, ApiEndpoints.Account.VerifyOtp);
+                var url = UrlUtility.GetAbsoluteUrl(_httpContextAccessor.HttpContext.Request, ApiEndpoints.Account.VerifyOtp);
+                var redirectUrl = $"{url}?email={request.Email}&otp={newOtp}";
+                existingUserResult.AddHeader(HeaderKeys.RedirectUrl, redirectUrl);
                 return existingUserResult;
             }
 

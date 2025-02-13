@@ -1,10 +1,9 @@
-using AuthService.Application.DTOs;
+using AuthService.Application.DTOs; 
 using AuthService.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SharedLibrary.Models;
-using SharedLibrary.Constants;
-
+using ApiResults = SharedLibrary.Models;
 namespace AuthService.API.Controllers;
 
 /// <summary>
@@ -36,10 +35,14 @@ public class AccountController : ControllerBase
     /// <response code="200">Returns success message when registration is successful</response>
     /// <response code="400">Returns error message when registration fails</response>
     [HttpPost("register")]
-    [ProducesResponseType(typeof(Result<AuthResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Result<AuthResponse>>> Register([FromBody] RegisterRequest request)
+    [ProducesResponseType(typeof(ApiResults.IResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResults.IResult), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<ApiResults.IResult>> Register([FromBody] RegisterRequest request)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
         var result = await _authService.RegisterAsync(request);
 
         foreach (var header in result.Headers)
@@ -54,14 +57,13 @@ public class AccountController : ControllerBase
     /// Authenticates a user and generates access tokens
     /// </summary>
     /// <param name="request">The login credentials</param>
-    /// <param name="request">The email and OTP verification details</param>
     /// <returns>Authentication response with tokens if verification is successful</returns>
     /// <response code="200">Returns authentication tokens when verification is successful</response>
     /// <response code="400">Returns error message when verification fails</response>
     [HttpPost("login")]
-    [ProducesResponseType(typeof(Result<AuthResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Result<AuthResponse>>> Login([FromBody] LoginRequest request)
+    [ProducesResponseType(typeof(IResult<AuthResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResults.IResult), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<IResult<AuthResponse>>> Login([FromBody] LoginRequest request)
     {
         var result = await _authService.LoginAsync(request);
         return result.IsSuccess ? Ok(result) : BadRequest(result);
@@ -72,9 +74,9 @@ public class AccountController : ControllerBase
     /// </summary>
     /// <param name="token">The verification token</param>
     [HttpPost("verify-email")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Result>> VerifyEmail([FromBody] string token)
+    [ProducesResponseType(typeof(ApiResults.IResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResults.IResult), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<ApiResults.IResult>> VerifyEmail([FromBody] string token)
     {
         var result = await _authService.VerifyEmailAsync(token);
         return result.IsSuccess ? Ok(result) : BadRequest(result);
@@ -88,9 +90,9 @@ public class AccountController : ControllerBase
     /// <response code="200">Returns success message when reset email is sent</response>
     /// <response code="400">Returns error message when the request fails</response>
     [HttpPost("forgot-password")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Result>> ForgotPassword([FromBody] ForgotPasswordRequest request)
+    [ProducesResponseType(typeof(ApiResults.IResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResults.IResult), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<ApiResults.IResult>> ForgotPassword([FromBody] ForgotPasswordRequest request)
     {
         var result = await _authService.ForgotPasswordAsync(request);
         return result.IsSuccess ? Ok(result) : BadRequest(result);
@@ -104,9 +106,9 @@ public class AccountController : ControllerBase
     /// <response code="200">Returns success message when password is reset</response>
     /// <response code="400">Returns error message when reset fails</response>
     [HttpPost("reset-password")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Result>> ResetPassword([FromBody] ResetPasswordRequest request)
+    [ProducesResponseType(typeof(ApiResults.IResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResults.IResult), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<ApiResults.IResult>> ResetPassword([FromBody] ResetPasswordRequest request)
     {
         var result = await _authService.ResetPasswordAsync(request);
         return result.IsSuccess ? Ok(result) : BadRequest(result);
@@ -122,10 +124,10 @@ public class AccountController : ControllerBase
     /// <response code="401">Returns when user is not authenticated</response>
     [Authorize]
     [HttpPost("change-password")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResults.IResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResults.IResult), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<Result>> ChangePassword([FromBody] ChangePasswordRequest request)
+    public async Task<ActionResult<ApiResults.IResult>> ChangePassword([FromBody] ChangePasswordRequest request)
     {
         var result = await _authService.ChangePasswordAsync(request);
         return result.IsSuccess ? Ok(result) : BadRequest(result);
@@ -141,14 +143,14 @@ public class AccountController : ControllerBase
     /// <response code="401">Returns when user is not authenticated</response>
     [Authorize]
     [HttpPut("profile")]
-    [ProducesResponseType(typeof(Result<UserResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResults.IResult<UserResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResults.IResult), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<Result<UserResponse>>> UpdateProfile([FromBody] UpdateUserRequest request)
+    public async Task<ActionResult<ApiResults.IResult<UserResponse>>> UpdateProfile([FromBody] UpdateUserRequest request)
     {
         var userId = User.FindFirst("userId")?.Value;
         if (string.IsNullOrEmpty(userId))
-            return BadRequest(Result.Failure(Error.BadRequest("User ID not found in token")));
+            return BadRequest(ApiResults.Result.Failure(Error.BadRequest("User ID not found in token")));
 
         var result = await _userService.UpdateUserAsync(userId, request);
         return result.IsSuccess ? Ok(result) : BadRequest(result);
@@ -157,16 +159,17 @@ public class AccountController : ControllerBase
     /// <summary>
     /// Refreshes the authentication tokens using a refresh token
     /// </summary>
-    /// <param name="refreshToken">The current refresh token</param>
+    /// <param name="request">The refresh token request</param>
     /// <returns>New authentication tokens if refresh is successful</returns>
     /// <response code="200">Returns new authentication tokens</response>
     /// <response code="400">Returns error message when refresh fails</response>
     /// <response code="401">Returns when user is not authenticated</response>
     [Authorize]
     [HttpPost("refresh-token")]
-    [ProducesResponseType(typeof(Result<AuthResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Result<AuthResponse>>> RefreshToken([FromBody] RefreshTokenRequest request)
+    [ProducesResponseType(typeof(ApiResults.IResult<AuthResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResults.IResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<ApiResults.IResult<AuthResponse>>> RefreshToken([FromBody] RefreshTokenRequest request)
     {
         var result = await _authService.RefreshTokenAsync(request);
         return result.IsSuccess ? Ok(result) : BadRequest(result);
@@ -177,14 +180,14 @@ public class AccountController : ControllerBase
     /// </summary>
     [Authorize]
     [HttpPost("logout")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResults.IResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResults.IResult), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<Result>> Logout()
+    public async Task<ActionResult<ApiResults.IResult>> Logout()
     {
         var userId = User.FindFirst("userId")?.Value;
         if (string.IsNullOrEmpty(userId))
-            return BadRequest(Result.Failure(Error.BadRequest("User ID not found in token")));
+            return BadRequest(ApiResults.Result.Failure(Error.BadRequest("User ID not found in token")));
 
         var result = await _authService.LogoutAsync(userId);
         return result.IsSuccess ? Ok(result) : BadRequest(result);

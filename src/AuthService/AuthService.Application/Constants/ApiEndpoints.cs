@@ -1,4 +1,4 @@
-namespace SharedLibrary.Constants;
+namespace AuthService.Application.Constants;
 
 /// <summary>
 /// Contains constant values for API endpoints used across the application

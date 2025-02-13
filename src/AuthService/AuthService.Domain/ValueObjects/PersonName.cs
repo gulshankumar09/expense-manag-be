@@ -1,3 +1,5 @@
+using SharedLibrary.Security;
+
 namespace AuthService.Domain.ValueObjects;
 
 public class PersonName
@@ -16,8 +18,8 @@ public class PersonName
         if (string.IsNullOrWhiteSpace(firstName))
             throw new ArgumentNullException(nameof(firstName));
 
-        if (string.IsNullOrWhiteSpace(lastName))
-            throw new ArgumentNullException(nameof(lastName));
+        // if (string.IsNullOrWhiteSpace(lastName))
+        //     throw new ArgumentNullException(nameof(lastName));
 
         // Add validation rules for names (e.g., length, allowed characters)
         if (firstName.Length > 50)
@@ -26,10 +28,12 @@ public class PersonName
         if (lastName.Length > 50)
             throw new ArgumentException("Last name cannot exceed 50 characters", nameof(lastName));
 
+        //Add XSS validation, Use SharedLibrary.Security.XssSanitizer   
+        firstName = XssSanitizer.Sanitize(firstName);
+        lastName = XssSanitizer.Sanitize(lastName);
+
         return new PersonName(firstName.Trim(), lastName.Trim());
     }
 
-    public string FullName => $"{FirstName} {LastName}";
-
-    public override string ToString() => FullName;
+    public override string ToString() => $"{FirstName} {LastName}".Trim();
 }
