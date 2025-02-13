@@ -12,10 +12,10 @@ namespace AuthService.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             // Create a default SuperAdmin user
-            var userId = "8e445865-a24d-4543-a6c6-9443d048cdb9"; // Fixed GUID for reproducibility
-            var roleId = "867f39a9-9ee4-4e30-8e2d-49b809815227"; // This is the SuperAdmin role ID from previous migration
+            var userId = "8e445865-a24d-4543-a6c6-9443d048cdb9";
+            var roleId = "07a2c42a-a455-4f25-953b-9f857ec315cd";
             var hasher = new PasswordHasher<IdentityUser>();
-            var passwordHash = hasher.HashPassword(null, "SuperAdmin@123"); // Default password
+            var passwordHash = hasher.HashPassword(null, "Super@123");
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
@@ -60,12 +60,13 @@ namespace AuthService.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             var userId = "8e445865-a24d-4543-a6c6-9443d048cdb9";
+            var roleId = "07a2c42a-a455-4f25-953b-9f857ec315cd";
 
             // Remove the user role assignment first
             migrationBuilder.DeleteData(
                 table: "AspNetUserRoles",
                 keyColumns: new[] { "UserId", "RoleId" },
-                keyValues: new object[] { userId, "867f39a9-9ee4-4e30-8e2d-49b809815227" }
+                keyValues: new object[] { userId, roleId }
             );
 
             // Then remove the user

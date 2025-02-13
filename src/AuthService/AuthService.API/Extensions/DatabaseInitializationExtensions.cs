@@ -24,7 +24,7 @@ public static class DatabaseInitializationExtensions
                 // Create a retry policy for database operations
                 var policy = Policy
                     .Handle<Exception>()
-                    .WaitAndRetryAsync(3, retryAttempt =>
+                    .WaitAndRetryAsync(1, retryAttempt =>
                         TimeSpan.FromSeconds(Math.Min(Math.Pow(2, retryAttempt), 30)), // exponential backoff
                         (exception, timeSpan, retryCount, context) =>
                         {
