@@ -47,7 +47,7 @@ public class UserService : IUserService
             roles);
     }
 
-    public async Task<IResult<UserResponse>> GetUserByIdAsync(string userId)
+    public async Task<IResult<UserResponse>> GetUserByIdAsync(string userId, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
@@ -57,7 +57,7 @@ public class UserService : IUserService
         return Result<UserResponse>.Success(response);
     }
 
-    public async Task<IResult<UserResponse>> GetUserByEmailAsync(string email)
+    public async Task<IResult<UserResponse>> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByEmailAsync(email);
         if (user == null)
@@ -67,7 +67,7 @@ public class UserService : IUserService
         return Result<UserResponse>.Success(response);
     }
 
-    public async Task<IResult<string>> RegisterUserAsync(RegisterRequest request)
+    public async Task<IResult<string>> RegisterUserAsync(RegisterRequest request, CancellationToken cancellationToken = default)
     {
         var existingUser = await _userManager.FindByEmailAsync(request.Email);
         if (existingUser != null)
@@ -133,7 +133,7 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<IResult<UserResponse>> UpdateUserAsync(string userId, UpdateUserRequest request)
+    public async Task<IResult<UserResponse>> UpdateUserAsync(string userId, UpdateUserRequest request, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
@@ -152,7 +152,7 @@ public class UserService : IUserService
         return Result<UserResponse>.Success(response);
     }
 
-    public async Task<IResult> DeactivateUserAsync(string userId)
+    public async Task<IResult> DeactivateUserAsync(string userId, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
@@ -168,7 +168,7 @@ public class UserService : IUserService
             : Result.Failure(result.Errors.First().Description);
     }
 
-    public async Task<IResult> ReactivateUserAsync(string userId)
+    public async Task<IResult> ReactivateUserAsync(string userId, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
@@ -184,7 +184,7 @@ public class UserService : IUserService
             : Result.Failure(result.Errors.First().Description);
     }
 
-    public async Task<IResult> DeleteUserAsync(string userId)
+    public async Task<IResult> DeleteUserAsync(string userId, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
@@ -200,7 +200,7 @@ public class UserService : IUserService
             : Result.Failure(result.Errors.First().Description);
     }
 
-    public async Task<IResult<PaginatedResponse<UserResponse>>> ListUsersAsync(UserListRequest request)
+    public async Task<IResult<PaginatedResponse<UserResponse>>> ListUsersAsync(UserListRequest request, CancellationToken cancellationToken = default)
     {
         var query = _userManager.Users
             .Where(u => !u.IsDeleted);

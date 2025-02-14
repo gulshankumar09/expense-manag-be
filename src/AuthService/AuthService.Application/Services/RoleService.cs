@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using SharedLibrary.Constants;
 using SharedLibrary.Models;
 using System.Security.Claims;
 
@@ -78,7 +79,7 @@ public class RoleService : IRoleService
         try
         {
             if (await _roleManager.RoleExistsAsync(request.Name))
-                return Result.Failure(Error.Conflict());
+                return Result.Failure(Error.Conflict(ErrorConstants.Messages.Conflict.ResourceAlreadyExists));
 
             var result = await _roleManager.CreateAsync(new IdentityRole(request.Name));
             if (!result.Succeeded)
@@ -120,7 +121,7 @@ public class RoleService : IRoleService
             }
 
             if (await _userManager.IsInRoleAsync(user, request.RoleName))
-                return Result.Failure(Error.Conflict());
+                return Result.Failure(Error.Conflict(ErrorConstants.Messages.Conflict.ResourceAlreadyExists));
 
             var result = await _userManager.AddToRoleAsync(user, request.RoleName);
             if (!result.Succeeded)

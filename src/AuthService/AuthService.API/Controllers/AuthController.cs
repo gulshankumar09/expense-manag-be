@@ -98,39 +98,6 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Registers a new user account
-    /// </summary>
-    /// <param name="request">The registration details</param>
-    /// <returns>Authentication response with tokens if registration is successful</returns>
-    /// <response code="200">Returns authentication tokens when registration is successful</response>
-    /// <response code="400">Returns error message when registration fails</response>
-    /// <response code="409">Returns when email already exists</response>
-    [HttpPost("register")]
-    [ProducesResponseType(typeof(Result<AuthResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<Result<AuthResponse>>> Register([FromBody] RegisterRequest request)
-    {
-        var result = await _authService.RegisterAsync(request);
-
-        if (!result.IsSuccess)
-        {
-            return result.Error switch
-            {
-                Error { Code: ErrorConstants.Codes.ConflictCode } => Conflict(result),
-                _ => BadRequest(result)
-            };
-        }
-
-        foreach (var header in result.Headers)
-        {
-            Response.Headers.Append(header.Key, header.Value);
-        }
-
-        return Ok(result);
-    }
-
-    /// <summary>
     /// Verifies a user's email address
     /// </summary>
     /// <param name="token">The verification token</param>

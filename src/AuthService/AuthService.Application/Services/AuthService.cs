@@ -49,7 +49,7 @@ public class AuthService : IAuthService
     }
 
     /// <inheritdoc/>
-    public async Task<IResult<AuthResponse>> LoginAsync(LoginRequest request)
+    public async Task<IResult<AuthResponse>> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null)
@@ -72,7 +72,7 @@ public class AuthService : IAuthService
     }
 
     /// <inheritdoc/>
-    public async Task<IResult<AuthResponse>> GoogleLoginAsync(string email, string googleId, string firstName, string lastName)
+    public async Task<IResult<AuthResponse>> GoogleLoginAsync(string email, string googleId, string firstName, string lastName, CancellationToken cancellationToken = default)
     {
         var existingUser = await _userManager.FindByEmailAsync(email);
 
@@ -118,7 +118,7 @@ public class AuthService : IAuthService
     }
 
     /// <inheritdoc/>
-    public async Task<Result<AuthResponse>> VerifyOtpAsync(VerifyOtpRequest request)
+    public async Task<Result<AuthResponse>> VerifyOtpAsync(VerifyOtpRequest request, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null)
@@ -139,7 +139,7 @@ public class AuthService : IAuthService
     }
 
     /// <inheritdoc/>
-    public async Task<IResult> ForgotPasswordAsync(ForgotPasswordRequest request)
+    public async Task<IResult> ForgotPasswordAsync(ForgotPasswordRequest request, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null)
@@ -157,7 +157,7 @@ public class AuthService : IAuthService
     }
 
     /// <inheritdoc/>
-    public async Task<IResult> ResetPasswordAsync(ResetPasswordRequest request)
+    public async Task<IResult> ResetPasswordAsync(ResetPasswordRequest request, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null)
@@ -171,7 +171,7 @@ public class AuthService : IAuthService
     }
 
     /// <inheritdoc/>
-    public async Task<IResult<AuthResponse>> RefreshTokenAsync(RefreshTokenRequest request)
+    public async Task<IResult<AuthResponse>> RefreshTokenAsync(RefreshTokenRequest request, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.Users.FirstOrDefaultAsync(u =>
             u.RefreshToken == request.RefreshToken && u.RefreshTokenExpiry > DateTime.UtcNow);
@@ -184,7 +184,7 @@ public class AuthService : IAuthService
     }
 
     /// <inheritdoc/>
-    public async Task<Result<string>> RevokeTokenAsync(string userId)
+    public async Task<Result<string>> RevokeTokenAsync(string userId, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
@@ -198,7 +198,7 @@ public class AuthService : IAuthService
     }
 
     /// <inheritdoc/>
-    public async Task<IResult> ChangePasswordAsync(ChangePasswordRequest request)
+    public async Task<IResult> ChangePasswordAsync(ChangePasswordRequest request, CancellationToken cancellationToken = default)
     {
         var userId = _httpContextAccessor.HttpContext?.User.FindFirst("userId")?.Value;
         if (string.IsNullOrEmpty(userId))
@@ -216,7 +216,7 @@ public class AuthService : IAuthService
     }
 
     /// <inheritdoc/>
-    public async Task<IResult> RegisterAsync(RegisterRequest request)
+    public async Task<IResult> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken = default)
     {
         var redirectUrl = UrlUtility.GetAbsoluteUrl(_httpContextAccessor.HttpContext.Request,ApiEndpoints.Account.VerifyOtp);
         var existingUser = await _userManager.FindByEmailAsync(request.Email);
@@ -282,7 +282,7 @@ public class AuthService : IAuthService
     }
 
     /// <inheritdoc/>
-    public async Task<IResult> VerifyEmailAsync(string token)
+    public async Task<IResult> VerifyEmailAsync(string token, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.Users.FirstOrDefaultAsync(u =>
             u.VerificationToken == token &&
@@ -301,7 +301,7 @@ public class AuthService : IAuthService
     }
 
     /// <inheritdoc/>
-    public async Task<IResult> LogoutAsync(string userId)
+    public async Task<IResult> LogoutAsync(string userId, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
