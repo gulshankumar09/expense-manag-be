@@ -27,6 +27,11 @@ public class Error
     /// </summary>
     public object? Details { get; }
 
+    /// <summary>
+    /// Gets additional error details (optional)
+    /// </summary>
+    public Dictionary<string, object?> Extensions { get; } = [];
+
     private Error(int statusCode, string code, string message, object? details = null)
     {
         StatusCode = statusCode;

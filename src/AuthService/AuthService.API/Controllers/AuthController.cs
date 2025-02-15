@@ -3,7 +3,8 @@ using AuthService.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using SharedLibrary.Models;
 using SharedLibrary.Constants;
-
+using Microsoft.AspNetCore.Authorization;
+using ApiResults = SharedLibrary.Models;
 namespace AuthService.API.Controllers;
 
 /// <summary>
@@ -37,6 +38,7 @@ public class AuthController : ControllerBase
     /// Authenticates a user using email and password
     /// </summary>
     /// <param name="request">The login credentials</param>
+    /// <param name="cancellationToken"></param>
     /// <returns>Authentication response with tokens if successful</returns>
     /// <response code="200">Returns authentication tokens when login is successful</response>
     /// <response code="400">Returns error message when login fails</response>
@@ -45,9 +47,9 @@ public class AuthController : ControllerBase
     [ProducesResponseType(typeof(Result<AuthResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<Result<AuthResponse>>> Login([FromBody] LoginRequest request)
+    public async Task<ActionResult<Result<AuthResponse>>> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
-        var result = await _authService.LoginAsync(request);
+        var result = await _authService.LoginAsync(request, cancellationToken);
 
         if (!result.IsSuccess)
         {
@@ -65,6 +67,7 @@ public class AuthController : ControllerBase
     /// Authenticates a user using Google OAuth
     /// </summary>
     /// <param name="request">The Google authentication request containing the ID token</param>
+    /// <param name="cancellationToken"></param>
     /// <returns>Authentication response with tokens if successful</returns>
     /// <response code="200">Returns authentication tokens when Google login is successful</response>
     /// <response code="400">Returns error message when Google login fails</response>
@@ -73,9 +76,9 @@ public class AuthController : ControllerBase
     [ProducesResponseType(typeof(Result<AuthResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<Result<AuthResponse>>> GoogleLogin([FromBody] GoogleAuthRequest request)
+    public async Task<ActionResult<Result<AuthResponse>>> GoogleLogin([FromBody] GoogleAuthRequest request, CancellationToken cancellationToken)
     {
-        var googleUser = await _googleAuthService.VerifyGoogleTokenAsync(request.IdToken);
+        var googleUser = await _googleAuthService.VerifyGoogleTokenAsync(request.IdToken, cancellationToken);
         if (googleUser == null)
             return Unauthorized(Result.Failure(Error.Unauthorized()));
 
@@ -83,7 +86,8 @@ public class AuthController : ControllerBase
             googleUser.Email,
             googleUser.GoogleId,
             googleUser.FirstName,
-            googleUser.LastName);
+            googleUser.LastName,
+            cancellationToken);
 
         if (!result.IsSuccess)
         {
@@ -98,57 +102,10 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Verifies a user's email address
-    /// </summary>
-    /// <param name="token">The verification token</param>
-    /// <returns>Success message if email is verified</returns>
-    /// <response code="200">Returns success message when email is verified</response>
-    /// <response code="400">Returns error message when verification fails</response>
-    [HttpPost("verify-email")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Result>> VerifyEmail([FromBody] string token)
-    {
-        var result = await _authService.VerifyEmailAsync(token);
-        return result.IsSuccess ? Ok(result) : BadRequest(result);
-    }
-
-    /// <summary>
-    /// Initiates the password reset process
-    /// </summary>
-    /// <param name="request">The email address for password reset</param>
-    /// <returns>Success message if reset email is sent</returns>
-    /// <response code="200">Returns success message when reset email is sent</response>
-    /// <response code="400">Returns error message when request fails</response>
-    [HttpPost("forgot-password")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Result>> ForgotPassword([FromBody] ForgotPasswordRequest request)
-    {
-        var result = await _authService.ForgotPasswordAsync(request);
-        return result.IsSuccess ? Ok(result) : BadRequest(result);
-    }
-
-    /// <summary>
-    /// Resets a user's password using a reset token
-    /// </summary>
-    /// <param name="request">The password reset details</param>
-    /// <returns>Success message if password is reset</returns>
-    /// <response code="200">Returns success message when password is reset</response>
-    /// <response code="400">Returns error message when reset fails</response>
-    [HttpPost("reset-password")]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Result>> ResetPassword([FromBody] ResetPasswordRequest request)
-    {
-        var result = await _authService.ResetPasswordAsync(request);
-        return result.IsSuccess ? Ok(result) : BadRequest(result);
-    }
-
-    /// <summary>
     /// Refreshes the authentication tokens
     /// </summary>
     /// <param name="request">The refresh token request</param>
+    /// <param name="cancellationToken"></param>
     /// <returns>New authentication tokens if refresh is successful</returns>
     /// <response code="200">Returns new authentication tokens</response>
     /// <response code="400">Returns error message when refresh fails</response>
@@ -157,9 +114,9 @@ public class AuthController : ControllerBase
     [ProducesResponseType(typeof(Result<AuthResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<Result<AuthResponse>>> RefreshToken([FromBody] RefreshTokenRequest request)
+    public async Task<ActionResult<Result<AuthResponse>>> RefreshToken([FromBody] RefreshTokenRequest request, CancellationToken cancellationToken)
     {
-        var result = await _authService.RefreshTokenAsync(request);
+        var result = await _authService.RefreshTokenAsync(request, cancellationToken);
 
         if (!result.IsSuccess)
         {
@@ -171,5 +128,23 @@ public class AuthController : ControllerBase
         }
 
         return Ok(result);
+    }
+
+    /// <summary>
+    /// Logs out the current user
+    /// </summary>
+    [Authorize]
+    [HttpPost("logout")]
+    [ProducesResponseType(typeof(ApiResults.IResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResults.IResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<ApiResults.IResult>> Logout(CancellationToken cancellationToken)
+    {
+        var userId = User.FindFirst("userId")?.Value;
+        if (string.IsNullOrEmpty(userId))
+            return BadRequest(ApiResults.Result.Failure(Error.BadRequest("User ID not found in token")));
+
+        var result = await _authService.LogoutAsync(userId, cancellationToken);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 }

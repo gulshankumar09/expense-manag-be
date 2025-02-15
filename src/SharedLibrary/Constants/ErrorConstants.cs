@@ -10,6 +10,7 @@ public static class ErrorConstants
     /// </summary>
     public static class Codes
     {
+        // General error codes
         public const string BadRequestCode = "BAD_REQUEST";
         public const string UnauthorizedCode = "UNAUTHORIZED";
         public const string ForbiddenCode = "FORBIDDEN";
@@ -17,6 +18,17 @@ public static class ErrorConstants
         public const string ConflictCode = "CONFLICT";
         public const string ValidationCode = "VALIDATION_ERROR";
         public const string InternalErrorCode = "INTERNAL_ERROR";
+        public const string UserNotVerified = "USER_NOT_VERIFIED";
+
+        // Email-related error codes
+        public const string EmailConfigError = "EMAIL_CONFIG_ERROR";
+        public const string SmtpConnectionError = "SMTP_CONNECTION_ERROR";
+        public const string EmailAuthError = "EMAIL_AUTH_ERROR";
+        public const string InvalidEmailRecipient = "INVALID_EMAIL_RECIPIENT";
+        public const string EmailRateLimit = "EMAIL_RATE_LIMIT";
+        public const string EmailSendingError = "EMAIL_SENDING_ERROR";
+        public const string EmailTemplateError = "EMAIL_TEMPLATE_ERROR";
+        public const string EmailAttachmentError = "EMAIL_ATTACHMENT_ERROR";
     }
 
     /// <summary>
@@ -24,6 +36,7 @@ public static class ErrorConstants
     /// </summary>
     public static class Messages
     {
+        // General error messages
         public const string InvalidCredentials = "Invalid email or password.";
         public const string UnauthorizedAccess = "You are not authorized to access this resource.";
         public const string UserNotFound = "User not found.";
@@ -47,6 +60,55 @@ public static class ErrorConstants
             public const string ConcurrentModification = "The resource was modified by another user.";
             public const string RoleAlreadyAssigned = "The role is already assigned to this user.";
             public const string UserAlreadyActive = "The user account is already active.";
+        }
+
+        // Email-related error messages
+        public static class Email
+        {
+            // Configuration errors
+            public const string ConfigurationError = "Email service configuration error.";
+            public const string MissingFromEmail = "Sender email address is not configured.";
+            public const string MissingSmtpHost = "SMTP host is not configured.";
+            public const string InvalidSmtpPort = "Invalid SMTP port configuration.";
+            public const string MissingCredentials = "SMTP credentials are not configured.";
+
+            // Connection errors
+            public const string SmtpConnectionError = "Failed to connect to email server.";
+            public const string SslRequired = "SSL/TLS connection is required.";
+            public const string TimeoutError = "Connection to email server timed out.";
+
+            // Authentication errors
+            public const string AuthenticationError = "Failed to authenticate with email server.";
+            public const string InvalidCredentials = "Invalid SMTP credentials.";
+
+            // Recipient errors
+            public const string InvalidRecipient = "Invalid recipient email address.";
+            public const string EmptyRecipient = "Recipient email address cannot be empty.";
+            public const string InvalidFormat = "Invalid email format.";
+            public const string RecipientNotFound = "Recipient email address not found.";
+
+            // Rate limiting
+            public const string RateLimitExceeded = "Email sending limit exceeded.";
+            public const string QuotaExceeded = "Email quota has been exceeded.";
+            public const string TooManyRecipients = "Too many recipients in single email.";
+
+            // Sending errors
+            public const string SendingError = "Failed to send email.";
+            public const string DeliveryFailed = "Email delivery failed.";
+            public const string MailboxUnavailable = "Recipient mailbox is unavailable.";
+            public const string MessageTooLarge = "Email message size exceeds limit.";
+
+            // Template errors
+            public const string TemplateError = "Failed to process email template.";
+            public const string TemplateMissing = "Email template not found.";
+            public const string TemplateInvalid = "Invalid email template format.";
+            public const string MissingTemplateData = "Required template data is missing.";
+
+            // Attachment errors
+            public const string AttachmentError = "Failed to process email attachment.";
+            public const string AttachmentTooLarge = "Attachment size exceeds limit.";
+            public const string InvalidAttachmentType = "Invalid attachment file type.";
+            public const string AttachmentNotFound = "Attachment file not found.";
         }
     }
 

@@ -75,7 +75,6 @@ public static class ServiceCollectionExtensions
 
         // Register Infrastructure Services
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IGoogleAuthService, GoogleAuthService>();
         services.AddScoped<IAuditService, AuditService>();
         services.AddScoped<IRoleSettingsRepository, RoleSettingsRepository>();

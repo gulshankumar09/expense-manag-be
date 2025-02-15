@@ -92,5 +92,5 @@ GO
 
     USE AuthServiceDB;
 
-    SELECT * FROM AspNetUsers
+    SELECT * FROM AspNetUsers WHERE RefreshToken = 'b441af48-a161-4aec-b1c4-6bb98d10c2e9'
     

@@ -49,6 +49,14 @@ public class AccountController : ControllerBase
         }
         var result = await _authService.RegisterAsync(request, cancellationToken);
 
+        if (result.Headers.Any())
+        {
+            foreach (var header in result.Headers)
+            {
+                Response.Headers.Append(header.Key, header.Value);
+            }
+        }
+        
         if (!result.IsSuccess)
         {
             return result.Error switch
@@ -58,31 +66,7 @@ public class AccountController : ControllerBase
             };
         }
 
-        foreach (var header in result.Headers)
-        {
-            Response.Headers.Append(header.Key, header.Value);
-        }
-
         return Ok(result);
-    }
-
-    /// <summary>
-    /// Authenticates a user and generates access tokens
-    /// </summary>
-    /// <param name="request">The login credentials</param>
-    /// <param name="cancellationToken"></param>
-    /// <returns>Authentication response with tokens if verification is successful</returns>
-    /// <response code="200">Returns authentication tokens when verification is successful</response>
-    /// <response code="400">Returns error message when verification fails</response>
-    [HttpPost("login")]
-    [ProducesResponseType(typeof(IResult<AuthResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResults.IResult), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<IResult<AuthResponse>>> Login(
-        [FromBody] LoginRequest request,
-        CancellationToken cancellationToken)
-    {
-        var result = await _authService.LoginAsync(request, cancellationToken);
-        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
     /// <summary>
@@ -187,43 +171,5 @@ public class AccountController : ControllerBase
         return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
-    /// <summary>
-    /// Refreshes the authentication tokens using a refresh token
-    /// </summary>
-    /// <param name="request">The refresh token request</param>
-    /// <param name="cancellationToken"></param>
-    /// <returns>New authentication tokens if refresh is successful</returns>
-    /// <response code="200">Returns new authentication tokens</response>
-    /// <response code="400">Returns error message when refresh fails</response>
-    /// <response code="401">Returns when user is not authenticated</response>
-    [Authorize]
-    [HttpPost("refresh-token")]
-    [ProducesResponseType(typeof(ApiResults.IResult<AuthResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResults.IResult), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<ApiResults.IResult<AuthResponse>>> RefreshToken(
-        [FromBody] RefreshTokenRequest request,
-        CancellationToken cancellationToken)
-    {
-        var result = await _authService.RefreshTokenAsync(request, cancellationToken);
-        return result.IsSuccess ? Ok(result) : BadRequest(result);
-    }
-
-    /// <summary>
-    /// Logs out the current user
-    /// </summary>
-    [Authorize]
-    [HttpPost("logout")]
-    [ProducesResponseType(typeof(ApiResults.IResult), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResults.IResult), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<ApiResults.IResult>> Logout(CancellationToken cancellationToken)
-    {
-        var userId = User.FindFirst("userId")?.Value;
-        if (string.IsNullOrEmpty(userId))
-            return BadRequest(ApiResults.Result.Failure(Error.BadRequest("User ID not found in token")));
-
-        var result = await _authService.LogoutAsync(userId, cancellationToken);
-        return result.IsSuccess ? Ok(result) : BadRequest(result);
-    }
+    
 }

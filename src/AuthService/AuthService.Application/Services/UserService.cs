@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using SharedLibrary.Constants;
 using SharedLibrary.Models;
 using SharedLibrary.Utility;
+using SharedLibrary.Interfaces;
 
 namespace AuthService.Application.Services;
 
@@ -19,6 +20,7 @@ public class UserService : IUserService
     private readonly IOtpService _otpService;
     private readonly IEmailService _emailService;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    
     public UserService(
         IUserRepository userRepository,
         UserManager<User> userManager,

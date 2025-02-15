@@ -8,15 +8,20 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     private readonly DbContext _context;
     private readonly DbSet<T> _dbSet;
 
-    public GenericRepository(DbContext context)
+    protected GenericRepository(DbContext context)
     {
         _context = context;
         _dbSet = context.Set<T>();
     }
 
-    public virtual async Task<T> GetByIdAsync(Guid id)
+    public virtual async Task<T?> GetByIdAsync(Guid id)
     {
-        return await _dbSet.FindAsync(id);
+        var entity = await _dbSet.FindAsync(id);
+        // if (entity == null)
+        // {
+        //     throw new KeyNotFoundException($"Entity with ID {id} not found.");
+        // }
+        return entity;
     }
 
     public virtual async Task<IEnumerable<T>> GetAllAsync()

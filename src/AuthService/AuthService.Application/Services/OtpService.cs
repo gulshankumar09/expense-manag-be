@@ -1,4 +1,5 @@
 using AuthService.Application.Interfaces;
+using SharedLibrary.Interfaces;
 
 namespace AuthService.Application.Services;
 

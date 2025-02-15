@@ -15,12 +15,12 @@ public class GoogleAuthService : IGoogleAuthService
         _configuration = configuration;
     }
 
-    public async Task<GoogleUserInfo?> VerifyGoogleTokenAsync(string idToken)
+    public async Task<GoogleUserInfo?> VerifyGoogleTokenAsync(string idToken, CancellationToken cancellationToken)
     {
         try
         {
             var response = await _httpClient.GetFromJsonAsync<GoogleUserResponse>(
-                $"https://oauth2.googleapis.com/tokeninfo?id_token={idToken}");
+                $"https://oauth2.googleapis.com/tokeninfo?id_token={idToken}", cancellationToken);
 
             if (response == null)
                 return null;

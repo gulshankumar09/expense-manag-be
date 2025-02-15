@@ -14,6 +14,7 @@ using System.Security.Claims;
 using System.Text;
 using SharedLibrary.Utility;
 using AuthService.Application.Constants;
+using SharedLibrary.Interfaces;
 
 namespace AuthService.Application.Services;
 
@@ -64,7 +65,7 @@ public class AuthService : IAuthService
             if (result.IsLockedOut)
                 return Result<AuthResponse>.Failure(Error.BadRequest("Account is locked. Try again later."));
 
-            return Result<AuthResponse>.Failure(Error.Unauthorized());
+            return Result<AuthResponse>.Failure(Error.Unauthorized(ErrorConstants.Messages.InvalidOldPassword));
         }
 
         var authResponse = await GenerateAuthResponse(user);
@@ -116,8 +117,7 @@ public class AuthService : IAuthService
         var authResponse = await GenerateAuthResponse(existingUser);
         return Result<AuthResponse>.Success(authResponse);
     }
-
-    /// <inheritdoc/>
+    
     public async Task<Result<AuthResponse>> VerifyOtpAsync(VerifyOtpRequest request, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
@@ -174,16 +174,16 @@ public class AuthService : IAuthService
     public async Task<IResult<AuthResponse>> RefreshTokenAsync(RefreshTokenRequest request, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.Users.FirstOrDefaultAsync(u =>
-            u.RefreshToken == request.RefreshToken && u.RefreshTokenExpiry > DateTime.UtcNow);
+            u.RefreshToken == request.RefreshToken && u.RefreshTokenExpiry > DateTime.UtcNow, cancellationToken);
 
         if (user == null)
-            return Result<AuthResponse>.Failure(Error.Unauthorized());
+            return Result<AuthResponse>.Failure(Error.Unauthorized(ErrorConstants.Messages.InvalidRefreshToken));
 
         var authResponse = await GenerateAuthResponse(user);
         return Result<AuthResponse>.Success(authResponse);
     }
 
-    /// <inheritdoc/>
+  
     public async Task<Result<string>> RevokeTokenAsync(string userId, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByIdAsync(userId);
@@ -218,24 +218,24 @@ public class AuthService : IAuthService
     /// <inheritdoc/>
     public async Task<IResult> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken = default)
     {
-        var redirectUrl = UrlUtility.GetAbsoluteUrl(_httpContextAccessor.HttpContext.Request,ApiEndpoints.Account.VerifyOtp);
+        var redirectUrl = UrlUtility.GetAbsoluteUrl(_httpContextAccessor.HttpContext.Request,ApiEndpoints.Account.VerifyEmail);
         var existingUser = await _userManager.FindByEmailAsync(request.Email);
         if (existingUser != null)
         {
-            if (!existingUser.EmailConfirmed)
-            {
-                // Generate and send new OTP
-                var newOtp = _otpService.GenerateOtp();
-                existingUser.SetVerificationToken(newOtp, TimeSpan.FromMinutes(15));
-                await _userManager.UpdateAsync(existingUser);
-                await _otpService.SendOtpAsync(request.Email, newOtp);
+            if (existingUser.EmailConfirmed)
+                return Result.Failure(Error.Conflict(ErrorConstants.Messages.EmailAlreadyExists));
+            // Generate and send new OTP
+            var newOtp = _otpService.GenerateOtp();
+            existingUser.SetVerificationToken(newOtp, TimeSpan.FromMinutes(15));
+            await _userManager.UpdateAsync(existingUser);
+            await _otpService.SendOtpAsync(request.Email, newOtp);
 
-                var result = Result<AuthResponse>.Failure(Error.BadRequest("Email already registered. Please verify your email."));
-                result.AddHeader(HeaderKeys.RedirectUrl, redirectUrl);
-                return result;
-            }
-
-            return Result.Failure(Error.Conflict(ErrorConstants.Messages.EmailAlreadyExists));
+            var result = Result<AuthResponse>.Failure(Error.Create(
+                400, 
+                ErrorConstants.Codes.UserNotVerified, 
+                ErrorConstants.Messages.EmailAlreadyExists + " " + ErrorConstants.Messages.EmailNotVerified));
+            result.AddHeader(HeaderKeys.RedirectUrl, redirectUrl);
+            return result;
         }
 
         var user = new User
@@ -286,7 +286,7 @@ public class AuthService : IAuthService
     {
         var user = await _userManager.Users.FirstOrDefaultAsync(u =>
             u.VerificationToken == token &&
-            u.VerificationTokenExpiry > DateTime.UtcNow);
+            u.VerificationTokenExpiry > DateTime.UtcNow, cancellationToken);
 
         if (user == null)
             return Result.Failure(Error.BadRequest("Invalid or expired verification token"));
@@ -310,7 +310,7 @@ public class AuthService : IAuthService
         user.RefreshToken = null;
         user.RefreshTokenExpiry = null;
         await _userManager.UpdateAsync(user);
-
+        
         return Result.Success();
     }
 
@@ -334,7 +334,7 @@ public class AuthService : IAuthService
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ??
             throw new InvalidOperationException("JWT Key not found in configuration")));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         var expires = DateTime.UtcNow.AddMinutes(Convert.ToInt32(_configuration["Jwt:ExpiryInMinutes"] ?? "60"));
 
         var token = new JwtSecurityToken(
@@ -342,7 +342,7 @@ public class AuthService : IAuthService
             audience: _configuration["Jwt:Audience"],
             claims: claims,
             expires: expires,
-            signingCredentials: creds
+            signingCredentials: credentials
         );
 
         var refreshToken = Guid.NewGuid().ToString();

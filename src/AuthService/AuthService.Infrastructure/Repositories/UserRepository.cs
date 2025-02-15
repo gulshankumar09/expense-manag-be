@@ -2,25 +2,20 @@ using AuthService.Application.Interfaces;
 using AuthService.Domain.Entities;
 using AuthService.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using SharedLibrary.Constants;
 using SharedLibrary.Repositories;
 
 namespace AuthService.Infrastructure.Repositories;
 
-public class UserRepository : GenericRepository<User>, IUserRepository
+public class UserRepository(AuthDbContext context) : GenericRepository<User>(context), IUserRepository
 {
-    private readonly AuthDbContext _authContext;
-
-    public UserRepository(AuthDbContext context) : base(context)
-    {
-        _authContext = context;
-    }
-
     public async Task<User> GetByEmailAsync(string email)
     {
-        var users = await _authContext.Users
+        var users = await context.Users
             .Where(u => !u.IsDeleted && u.IsActive)
             .ToListAsync();
 
-        return users.FirstOrDefault(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+        return users.FirstOrDefault(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase)) ??
+               throw new KeyNotFoundException(ErrorConstants.Messages.UserNotFound);
     }
 }

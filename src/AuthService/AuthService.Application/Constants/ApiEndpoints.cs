@@ -8,6 +8,7 @@ public static class ApiEndpoints
     public static class Account
     {
         private const string Base = "/api/account";
+        public const string VerifyEmail = $"{Base}/verify-email";
         public const string VerifyOtp = $"{Base}/verify-otp";
         public const string Register = $"{Base}/register";
         public const string Login = $"{Base}/login";

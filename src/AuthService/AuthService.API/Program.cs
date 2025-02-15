@@ -1,6 +1,7 @@
 using AuthService.API.Extensions;
 using System.Threading.RateLimiting;
 using SharedLibrary.Middleware;
+using SharedLibrary.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,13 +23,14 @@ builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddIdentityServices();
 builder.Services.AddAuthenticationServices(builder.Configuration);
 builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddEmailService(builder.Configuration);
 
 // Add Rate Limiting
 builder.Services.AddRateLimiter(options =>
 {
     options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
        RateLimitPartition.GetFixedWindowLimiter(
-          partitionKey: context.User?.Identity?.Name ?? context.Request.Headers.Host.ToString(),
+          partitionKey: context.User.Identity?.Name ?? context.Request.Headers.Host.ToString(),
          factory: partition => new FixedWindowRateLimiterOptions
          {
              AutoReplenishment = true,
