@@ -13,6 +13,9 @@ if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_
 }
 #endif
 
+// Add CORS
+builder.Services.AddCustomCors(builder.Configuration);
+
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -64,6 +67,9 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseGlobalExceptionHandler();
+
+// Use CORS before other middleware
+app.UseCors(app.Environment.IsDevelopment() ? "Development" : "Production");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

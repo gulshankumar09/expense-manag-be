@@ -70,7 +70,6 @@ public static class ServiceCollectionExtensions
         services.AddHttpContextAccessor();
 
         // Configure Settings
-        services.Configure<EmailSettings>(configuration.GetSection("Email"));
         services.Configure<UrlSettings>(configuration.GetSection(UrlSettings.SectionName));
 
         // Register Infrastructure Services
