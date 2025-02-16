@@ -79,32 +79,4 @@ public class LocalizationService : ILocalizationService
     {
         return _settings.SupportedCultures;
     }
-
-    /// <inheritdoc/>
-    public string GetString(string key, params object[] args)
-    {
-        var localizedString = _localizer[key, args];
-        if (localizedString.ResourceNotFound && _settings.ThrowOnMissingTranslation)
-        {
-            throw new KeyNotFoundException($"Resource key not found: {key}");
-        }
-        return localizedString.Value;
-    }
-
-    /// <inheritdoc/>
-    public string GetString(string key, string culture, params object[] args)
-    {
-        var currentCulture = CultureInfo.CurrentCulture;
-        try
-        {
-            CultureInfo.CurrentCulture = new CultureInfo(culture);
-            CultureInfo.CurrentUICulture = new CultureInfo(culture);
-            return GetString(key, args);
-        }
-        finally
-        {
-            CultureInfo.CurrentCulture = currentCulture;
-            CultureInfo.CurrentUICulture = currentCulture;
-        }
-    }
 }

@@ -89,43 +89,17 @@ public static class LocalizationExtensions
     /// <returns>The application builder for chaining</returns>
     public static IApplicationBuilder UseAppLocalization(this IApplicationBuilder app)
     {
+        // Use request localization
         app.UseRequestLocalization();
+
+        // Set up default globalization service
+        GlobalizationDefaults.DefaultService = app.ApplicationServices
+            .GetRequiredService<IGlobalizationService>();
+
+        // Set up default localization service
+        LocalizationDefaults.DefaultService = app.ApplicationServices
+            .GetRequiredService<ILocalizationService>();
+            
         return app;
     }
-
-    /// <summary>
-    /// Gets the localized string for a key using the current culture
-    /// </summary>
-    public static string Localize(this string key, ILocalizationService localizationService, params object[] args)
-        => localizationService.GetString(key, args);
-
-    /// <summary>
-    /// Gets the localized string for a key using the specified culture
-    /// </summary>
-    public static string Localize(this string key, ILocalizationService localizationService, string culture, params object[] args)
-        => localizationService.GetString(key, culture, args);
-
-    /// <summary>
-    /// Gets the current culture code
-    /// </summary>
-    public static string GetCurrentCulture(this ILocalizationService localizationService)
-        => CultureInfo.CurrentCulture.Name;
-
-    /// <summary>
-    /// Gets the current UI culture code
-    /// </summary>
-    public static string GetCurrentUICulture(this ILocalizationService localizationService)
-        => CultureInfo.CurrentUICulture.Name;
-
-    /// <summary>
-    /// Checks if a culture is supported by the application
-    /// </summary>
-    public static bool IsSupportedCulture(this ILocalizationService localizationService, string culture)
-        => localizationService.GetSupportedCultures().Contains(culture);
-
-    /// <summary>
-    /// Gets the display name of a culture in its native language
-    /// </summary>
-    public static string GetCultureDisplayName(this ILocalizationService localizationService, string culture)
-        => new CultureInfo(culture).NativeName;
 }

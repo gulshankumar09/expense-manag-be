@@ -48,21 +48,4 @@ public interface ILocalizationService
     /// </summary>
     /// <returns>Array of supported culture codes</returns>
     string[] GetSupportedCultures();
-
-    /// <summary>
-    /// Gets a localized string for the specified key using the current culture
-    /// </summary>
-    /// <param name="key">The resource key</param>
-    /// <param name="args">Optional format arguments</param>
-    /// <returns>The localized string</returns>
-    string GetString(string key, params object[] args);
-
-    /// <summary>
-    /// Gets a localized string for the specified key using the specified culture
-    /// </summary>
-    /// <param name="key">The resource key</param>
-    /// <param name="culture">The culture code (e.g., "en-US")</param>
-    /// <param name="args">Optional format arguments</param>
-    /// <returns>The localized string</returns>
-    string GetString(string key, string culture, params object[] args);
 }
