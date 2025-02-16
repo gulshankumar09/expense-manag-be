@@ -13,11 +13,17 @@ if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_
 }
 #endif
 
+// Add localization
+builder.Services.AddAppLocalization(builder.Configuration);
+
 // Add CORS
 builder.Services.AddCustomCors(builder.Configuration);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddDataAnnotationsLocalization()
+    .AddViewLocalization();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -67,6 +73,9 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseGlobalExceptionHandler();
+
+// Use localization before other middleware
+app.UseAppLocalization();
 
 // Use CORS before other middleware
 app.UseCors(app.Environment.IsDevelopment() ? "Development" : "Production");
