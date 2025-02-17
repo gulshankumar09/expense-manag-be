@@ -12,6 +12,8 @@ public abstract class BaseEntity
 
     protected BaseEntity()
     {
+        CreatedAt = DateTime.UtcNow;
+        CreatedBy = "SYSTEM";
     }
 
     public void SetCreatedBy(string userId)
